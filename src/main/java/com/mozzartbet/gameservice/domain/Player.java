@@ -1,7 +1,15 @@
-package com.mozzartbet.gameservice.parser;
+package com.mozzartbet.gameservice.domain;
 
 public class Player {
-	int number;
+	private int number;
+	private String name;
+	private String position;
+	private String height;
+	private String weight;
+	private String birthDate;
+	private String nationality;
+	private int expirience;
+	private String college;
 	public int getNumber() {
 		return number;
 	}
@@ -50,11 +58,18 @@ public class Player {
 	public void setCollege(String college) {
 		this.college = college;
 	}
-	private String name;
-	private String position;
-	private String height;
-	private String weight;
-	private String birthDate;
-	private String nationality;
-	private String college;
+	public int getExpirience() {
+		return expirience;
+	}
+	public void setExpirience(int expirience) {
+		this.expirience = expirience;
+	}
+	
+	@Override
+	public String toString() {
+		return "Player [number=" + number + ", name=" + name + ", position=" + position + ", height=" + height
+				+ ", weight=" + weight + ", birthDate=" + birthDate + ", nationality=" + nationality + ", expirience="
+				+ expirience + ", college=" + college + "]";
+	}
+
 }
