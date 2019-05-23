@@ -1,38 +1,18 @@
 package com.mozzartbet.gameservice.domain;
 
 import java.util.LinkedList;
-import com.mozzartbet.gameservice.util.ConvertParsers;
+import lombok.Data;
 
+@Data
 public class Season {
   private int seasonYear;
-
-
-  private final int totalTeams = 30;
   private LinkedList<Match> seasonMatches;
+  private LinkedList<Team> teams;
 
-  public Season(String year, LinkedList<Match> matches) {
-    seasonYear = ConvertParsers.tryParseInt(year) ? Integer.parseInt(year) : 0;
-    seasonMatches = matches;
-  }
-
-  public int getSeasonYear() {
-    return seasonYear;
-  }
-
-  public void setSeasonYear(int seasonYear) {
+  public Season(int seasonYear, LinkedList<Match> seasonMatches, LinkedList<Team> teams) {
     this.seasonYear = seasonYear;
-  }
-
-  public LinkedList<Match> getSeasonMatches() {
-    return seasonMatches;
-  }
-
-  public void setSeasonMatches(LinkedList<Match> seasonMatches) {
     this.seasonMatches = seasonMatches;
-  }
-
-  public int getTotalTeams() {
-    return totalTeams;
+    this.teams = teams;
   }
 
 

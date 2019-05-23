@@ -1,7 +1,9 @@
 package com.mozzartbet.gameservice.domain;
 
 import java.util.LinkedList;
+import lombok.Data;
 
+@Data
 public class Team {
   private String teamName;
   private LinkedList<Player> players;
@@ -11,20 +13,17 @@ public class Team {
     players = new LinkedList<Player>();
   }
 
-  public String getTeamName() {
-    return teamName;
+
+
+  @Override
+  public String toString() {
+    return "Team [teamName=" + teamName + ", players=" + players + "]";
   }
 
-  public void setTeamName(String teamName) {
-    this.teamName = teamName;
+  public void showTeam() {
+    System.out.println("=====" + teamName + "=====");
+    for (Player p : players) {
+      System.out.println(p);
+    }
   }
-
-  public LinkedList<Player> getPlayers() {
-    return players;
-  }
-
-  public void setPlayers(LinkedList<Player> players) {
-    this.players = players;
-  }
-
 }
