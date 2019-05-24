@@ -3,7 +3,10 @@ package com.mozzartbet.gameservice.parser;
 import static org.junit.Assert.assertEquals;
 import java.util.LinkedList;
 import org.junit.Test;
+import com.mozzartbet.gameservice.domain.Match;
+import com.mozzartbet.gameservice.domain.MatchEvent;
 import com.mozzartbet.gameservice.domain.Player;
+import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.domain.Team;
 
 public class JunitTest {
@@ -41,9 +44,24 @@ public class JunitTest {
   }
 
   @Test
-  public void testMatchRead() {
+  public void testMatchPbpFirstRow() {
     JSoupMatchParser jmp = new JSoupMatchParser();
-    // jmp.readMatch("https://www.basketball-reference.com/boxscores/pbp/201905200POR.html");
+    LinkedList<MatchEvent> matchEvents = jmp
+        .returnMatchEvents("https://www.basketball-reference.com/boxscores/pbp/201905200POR.html");
+    assertEquals(matchEvents.get(0).getTimestamp(), "12:00.0");
+  }
+
+  @Test
+  public void testNumberOfMatchesInMonth(String urlOfMonth, int numberOfMatches) {
+    JSoupMatchParser jmp = new JSoupMatchParser();
+    LinkedList<Match> matches = jmp.returnMatchesFromMonth(urlOfMonth);
+    assertEquals(matches.size(), numberOfMatches);
+  }
+
+  public void testReturningSeason(int year) {
+    JSoupMatchParser jmp = new JSoupMatchParser();
+    Season s = jmp.returnSeasonMatches(year);
+    assertEquals(s.getSeasonYear(), year);
   }
 
 }

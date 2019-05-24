@@ -1,5 +1,5 @@
 package com.mozzartbet.gameservice.domain;
 
-enum MatchEventType {
-  SCORE, MISS, FAUL, REBOUND, ASSIST, TURNOVER, STEAL
+public enum MatchEventType {
+  SCOREHOMETEAM, SCOREAWAYTEAM, MISS, FAUL, REBOUND, ASSIST, TURNOVER, STEAL, NEUTRALEVENT
 }

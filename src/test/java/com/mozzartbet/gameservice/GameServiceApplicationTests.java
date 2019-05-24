@@ -15,7 +15,13 @@ public class GameServiceApplicationTests {
     // unitTest.testNumberOfPlayers();
     // unitTest.testNumberOfSeasons(2010);
     // unitTest.testMatchRead();
-    unitTest.testPlayerInATeam("Peja Stojakovic", "Sacramento", 2000);
+    // unitTest.testPlayerInATeam("Peja Stojakovic", "Sacramento", 2000);
+    // unitTest.testMatchPbpFirstRow();
+    // TEST DA U OKTOBRU 2019 JE BILO 110 utakmica
+    // unitTest.testNumberOfMatchesInMonth(
+    // "https://www.basketball-reference.com/leagues/NBA_2019_games-october.html", 110);
+    unitTest.testReturningSeason(1967);
+
   }
 
 }
