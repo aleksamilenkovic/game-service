@@ -1,6 +1,7 @@
 package com.mozzartbet.gameservice.domain;
 
 import java.util.LinkedList;
+import com.mozzartbet.gameservice.util.ConvertHelper;
 import lombok.Data;
 
 @Data
@@ -13,8 +14,8 @@ public class Match {
   private String finalScore;
   private String homeTeam;
   private LinkedList<MatchEvent> matchEvents;
-  private String homeTeamPoints;
-  private String awayTeamPoints;
+  private int homeTeamPoints;
+  private int awayTeamPoints;
   // za pocetak nek timovi budu stringovi, kasnije klase timovi (a vec su napravljene metode za
   // vracanje timova)
 
@@ -25,8 +26,8 @@ public class Match {
     // overtimes = new LinkedList<Quarter>();
     homeTeam = "HomeTeam";
     awayTeam = "AwayTeam";
-    homeTeamPoints = "0";
-    awayTeamPoints = "0";
+    homeTeamPoints = 0;
+    awayTeamPoints = 0;
     matchEvents = new LinkedList<MatchEvent>();
     date = "";
   }
@@ -36,10 +37,12 @@ public class Match {
     this.date = date;
     this.homeTeam = homeTeam;
     this.awayTeam = awayTeam;
-    this.homeTeamPoints = homeTeamPoints;
-    this.awayTeamPoints = awayTeamPoints;
+    this.homeTeamPoints =
+        ConvertHelper.tryParseInt(homeTeamPoints) ? Integer.parseInt(homeTeamPoints) : 0;
+    this.awayTeamPoints =
+        ConvertHelper.tryParseInt(awayTeamPoints) ? Integer.parseInt(awayTeamPoints) : 0;
     this.matchEvents = matchEvents;
-    this.finalScore = this.awayTeamPoints + "-" + this.homeTeamPoints;
+    this.finalScore = this.awayTeamPoints + " - " + this.homeTeamPoints;
   }
 
   @Override

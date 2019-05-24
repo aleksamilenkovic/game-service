@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class Player {
+  final String id;
   private String number;
   private String name;
   private String position;
@@ -15,7 +16,8 @@ public class Player {
   private String college;
 
   public Player(String number, String name, String position, String height, String weight,
-      String birthDate, String nationality, String expirience, String college) {
+      String birthDate, String nationality, String expirience, String college, String id) {
+    this.id = id;
     this.number = number;
     this.name = name;
     this.position = position;

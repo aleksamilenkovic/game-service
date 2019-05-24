@@ -7,6 +7,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.domain.Team;
+import com.mozzartbet.gameservice.util.ConvertHelper;
 import com.mozzartbet.gameservice.util.JsoupHelper;
 
 
@@ -16,7 +17,7 @@ public class JSoupTeamParser {
 
   public void readPlayers(String pageUrl) {
     // first method for exersice jsoup-
-    Document doc = JsoupHelper.connectToPage(pageUrl);
+    Document doc = JsoupHelper.connectToLivePage(pageUrl);
     if (doc == null)
       return;
 
@@ -44,9 +45,10 @@ public class JSoupTeamParser {
     for (int i = 0; i < rows.size(); i++) {
       Elements cols = rows.get(i).select("td");
       Element header = rows.get(i).select("th").first();
+      String id = ConvertHelper.returnPlayerId(cols.get(0).select("a").first().attr("abs:href"));
       Player player = new Player(header.text(), cols.get(0).text(), cols.get(1).text(),
           cols.get(2).text(), cols.get(3).text(), cols.get(4).text(), cols.get(5).text(),
-          cols.get(6).text(), cols.get(7).text());
+          cols.get(6).text(), cols.get(7).text(), id);
       listOfPlayers.add(player);
     }
 
@@ -56,7 +58,7 @@ public class JSoupTeamParser {
   public Team returnTeam(String pageUrl, String teamName) {
     Team t = new Team();
     t.setTeamName(teamName);
-    Document doc = JsoupHelper.connectToPage(pageUrl);
+    Document doc = JsoupHelper.connectToLivePage(pageUrl);
     if (doc == null)
       return null;
 
@@ -69,7 +71,7 @@ public class JSoupTeamParser {
   public LinkedList<Team> readTeamsFromSeason(int seasonYear) {
     String url = "https://www.basketball-reference.com/leagues/NBA_" + seasonYear + ".html";
     LinkedList<Team> teams = new LinkedList<Team>();
-    Document doc = JsoupHelper.connectToPage(url);
+    Document doc = JsoupHelper.connectToLivePage(url);
     Elements rows = null;
     if (doc == null)
       return null;

@@ -55,7 +55,7 @@ public class JSoupMatchParser {
   public LinkedList<MatchEvent> returnMatchEvents(String pageUrl) {
     // Match match = new Match();
     LinkedList<MatchEvent> matchEvents = new LinkedList<MatchEvent>();
-    Document doc = JsoupHelper.connectToPage(pageUrl);
+    Document doc = JsoupHelper.connectToLivePage(pageUrl);
     if (doc == null)
       return matchEvents;
 
@@ -79,9 +79,40 @@ public class JSoupMatchParser {
     return matchEvents;
   }
 
+  public Match returnMatchById(String id) {
+    Match match = null;
+    String url = "https://www.basketball-reference.com/boxscores/pbp/" + id + ".html";
+    Document doc = JsoupHelper.connectToLivePage(url);
+    if (doc == null)
+      return match;
+    Element scorebox = doc.getElementsByClass("scorebox").first();
+    String awayTeam = scorebox.select("strong").get(0).text();
+    String homeTeam = scorebox.select("strong").get(1).text();
+    String[] dt = doc.select("div.scorebox_meta").select("div").first().text().split(" ");
+    String date = dt[2] + dt[3] + dt[4];
+    String pointsAwayTeam = scorebox.select("div.score").select("div").get(0).text();
+    String pointsHomeTeam = scorebox.select("div.score").get(1).text();
+    LinkedList<MatchEvent> matchEvents = returnMatchEvents(url);
+    match = new Match(date, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, matchEvents);
+    return match;
+  }
+
+  public Match returnMatch(Element row, Elements cols) {
+    Match match = null;
+    String date = row.select("th").first().text();
+    String awayTeam = cols.get(1).text();
+    String pointsAwayTeam = cols.get(2).text();
+    String homeTeam = cols.get(3).text();
+    String pointsHomeTeam = cols.get(4).text();
+    String pbpURL = cols.get(5).select("a").first().attr("abs:href");
+    LinkedList<MatchEvent> matchEvents = returnMatchEvents(pbpURL);
+    match = new Match(date, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, matchEvents);
+    return match;
+  }
+
   public LinkedList<Match> returnMatchesFromMonth(String url) {
     LinkedList<Match> matches = new LinkedList<Match>();
-    Document doc = JsoupHelper.connectToPage(url);
+    Document doc = JsoupHelper.connectToLivePage(url);
     if (doc == null)
       return matches;
 
@@ -91,15 +122,7 @@ public class JSoupMatchParser {
       Elements cols = row.select("td");
       if (cols.isEmpty())
         continue;
-      String date = row.select("th").first().text();
-      String awayTeam = cols.get(1).text();
-      String pointsAwayTeam = cols.get(2).text();
-      String homeTeam = cols.get(3).text();
-      String pointsHomeTeam = cols.get(4).text();
-      String pbpURL = cols.get(5).select("a").first().attr("abs:href");
-      LinkedList<MatchEvent> matchEvents = returnMatchEvents(pbpURL);
-      Match match =
-          new Match(date, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, matchEvents);
+      Match match = returnMatch(row, cols);
       matches.add(match);
       System.out.println(match);
     }
@@ -109,8 +132,8 @@ public class JSoupMatchParser {
   public Season returnSeasonMatches(int year) {
     LinkedList<Match> seasonMatches = new LinkedList<Match>();
     LinkedList<Match> matches = null;
-    Document doc = JsoupHelper
-        .connectToPage("https://www.basketball-reference.com/leagues/NBA_" + year + "_games.html");
+    Document doc = JsoupHelper.connectToLivePage(
+        "https://www.basketball-reference.com/leagues/NBA_" + year + "_games.html");
     Season season = null;
     if (doc == null)
       return season;
