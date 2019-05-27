@@ -91,7 +91,7 @@ public class JSoupTeamParser {
         t.showTeam();
         teams.add(t);
       }
-      if (seasonYear > 1970)
+      if (seasonYear <= 1970)
         break;
       rows = doc.select("table#divs_standings_W tr.full_table");
     }

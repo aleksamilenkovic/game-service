@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.LinkedList;
 import org.junit.Test;
 import com.mozzartbet.gameservice.domain.Match;
-import com.mozzartbet.gameservice.domain.MatchEvent;
 import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.domain.Team;
@@ -44,18 +43,18 @@ public class JunitTest {
   }
 
   @Test
-  public void testMatchPbpFirstRow() {
+  public void testMatchPbpFirstRow(String matchID) {
     JSoupMatchParser jmp = new JSoupMatchParser();
-    LinkedList<MatchEvent> matchEvents = jmp
-        .returnMatchEvents("https://www.basketball-reference.com/boxscores/pbp/201905200POR.html");
-    assertEquals(matchEvents.get(0).getTimestamp(), "12:00.0");
+    Match match = jmp.returnMatch(matchID);
+    assertEquals(match.getMatchEvents().get(0).getTimestamp(), "12:00.0");
   }
 
   @Test
-  public void testNumberOfMatchesInMonth(String urlOfMonth, int numberOfMatches) {
+  public void testNumberOfMatchesInMonth(int year, String month, int numberOfMatches) {
     JSoupMatchParser jmp = new JSoupMatchParser();
-    LinkedList<Match> matches = jmp.returnMatchesFromMonth(urlOfMonth);
+    LinkedList<Match> matches = jmp.returnMatchesFromMonth(year, month);
     assertEquals(matches.size(), numberOfMatches);
+    System.out.println(matches);
   }
 
   public void testReturningSeason(int year) {

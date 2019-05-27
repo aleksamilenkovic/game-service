@@ -4,42 +4,47 @@ import lombok.Data;
 
 @Data
 public class MatchEvent {
-  private MatchEventType type;
-  private String scoreSummary;
+  // private MatchEventType type;
+  private String scoreSummary = "";
   private String timestamp;
-  private String homeTeamAction;
-  private String awayTeamAction;
-  private String pointsMadeHomeTeam;
-  private String pointsMadeAwayTeam;
-  private String neutralAction;
+  // mogucnost za 2 tipa u jednoj akciji (npr pogodak i asistencija)
+  // [VAZNO] pri prolazu kroz akciju (te 2) ako je prva rebound drugu PRESKOCITI jer je prazan
+  // element. Takodje ako su akcije null znaci da je timski nesto uradjeno ili timeout
+  private ActionType actions[];
+  private String homeTeamAction = "";
+  private String awayTeamAction = "";
+  private String pointsMadeHomeTeam = "";
+  private String pointsMadeAwayTeam = "";
+  private String neutralAction = "";
   private String quarter;
 
-  public MatchEvent(MatchEventType type, String neutralAction, String timestamp, int quarter) {
-    this.type = type;
+  public MatchEvent(String neutralAction, String timestamp, String quarter) {
     this.neutralAction = neutralAction;
     this.timestamp = timestamp;
-    if (quarter < 5)
-      this.quarter = quarter + ".quarter";
-    else
-      this.quarter = quarter - 4 + ".OT";
+    this.quarter = quarter;
+    actions = null;
   }
 
-  public MatchEvent(MatchEventType type, String action, String points, String timestamp,
-      int quarter, String scoreSummary) {
-    if (type == MatchEventType.SCOREHOMETEAM) {
-      homeTeamAction = action;
-      pointsMadeHomeTeam = points;
-    } else if (type == MatchEventType.SCOREAWAYTEAM) {
-      awayTeamAction = action;
-      pointsMadeAwayTeam = points;
-    }
-    this.type = type;
+  // konstruktor za drugi tim tj homeTeam ako je nesto uradio
+  public MatchEvent(String timestamp, String scoreSummary, String pointsMadeHomeTeam,
+      String homeTeamAction, ActionType actions[], String quarter) {
     this.timestamp = timestamp;
     this.scoreSummary = scoreSummary;
-    if (quarter < 5)
-      this.quarter = quarter + ".quarter";
-    else
-      this.quarter = quarter - 4 + ".OT";
+    this.pointsMadeHomeTeam = pointsMadeHomeTeam;
+    this.homeTeamAction = homeTeamAction;
+    this.actions = actions;
+    this.quarter = quarter;
+  }
+
+  // konstruktor za prvi tim ako je nesto uradio
+  public MatchEvent(String timestamp, String awayTeamAction, ActionType actions[],
+      String pointsMadeAwayTeam, String scoreSummary, String quarter) {
+    this.timestamp = timestamp;
+    this.awayTeamAction = awayTeamAction;
+    this.actions = actions;
+    this.pointsMadeAwayTeam = pointsMadeAwayTeam;
+    this.scoreSummary = scoreSummary;
+    this.quarter = quarter;
   }
 
 }

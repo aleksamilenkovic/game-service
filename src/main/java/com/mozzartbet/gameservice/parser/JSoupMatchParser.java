@@ -4,82 +4,79 @@ import java.util.LinkedList;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import com.mozzartbet.gameservice.domain.ActionType;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.MatchEvent;
-import com.mozzartbet.gameservice.domain.MatchEventType;
 import com.mozzartbet.gameservice.domain.Season;
+import com.mozzartbet.gameservice.util.ConvertHelper;
 import com.mozzartbet.gameservice.util.JsoupHelper;
 
 public class JSoupMatchParser {
-  int quarter = 1;
+  String quarter = "";
 
   public MatchEvent returnMatchEvent(Element row) {
     MatchEvent matchEvent = null;
     Elements cols = row.select("td");
     String timestamp = cols.get(0).text();
-    String firstAction = cols.get(1).text();
-    String score;
-    MatchEventType actionType;
-    if (firstAction.contains("Jump ball") || firstAction.contains("quarter")
-        || firstAction.contains("overtime")) {
-      if (firstAction.contains("End of")) // AKO JE KRAJ CETVRTINE
-        quarter++;
-      actionType = MatchEventType.NEUTRALEVENT;
-      matchEvent = new MatchEvent(actionType, firstAction, timestamp, quarter);
-      return matchEvent;
-    }
-    // PROVERA DA LI JE NEUTRALNI DOGADJAJ SKOK ZA LOPTU/ POCETAK ILI KRAJ CETVRTINE
-    else if (firstAction.isEmpty()) {
-      String secondAction = cols.get(5).text();
-      String pointsMadeHomeTeam = cols.get(4).text();
-      score = cols.get(3).text();
-      actionType = MatchEventType.SCOREHOMETEAM;
+    String awayTeamAction = cols.get(1).text();
+    String scoreSummary;
+    String homeTeamAction;
+    String points;
+    boolean pointsMade = false;
+    Elements playersLink;
+    ActionType[] actions;
+    if (awayTeamAction.equals("\u00a0")) {
+      points = cols.get(4).text();
+      if (!points.isEmpty())
+        pointsMade = true;
+      homeTeamAction = cols.get(5).text();
+      playersLink = cols.get(5).select("a");
+      actions = ConvertHelper.returnActionType(homeTeamAction, pointsMade, playersLink);
+      scoreSummary = cols.get(3).text();
       matchEvent =
-          new MatchEvent(actionType, secondAction, pointsMadeHomeTeam, timestamp, quarter, score);
-      return matchEvent;
+          new MatchEvent(timestamp, scoreSummary, points, homeTeamAction, actions, quarter);
     } else {
-      String pointsMadeAwayTeam = cols.get(2).text();
-      score = cols.get(3).text();
-      actionType = MatchEventType.SCOREAWAYTEAM;
+      if (cols.size() == 2) {
+        // neutralan dogadjaj
+        matchEvent = new MatchEvent(awayTeamAction, timestamp, quarter);
+        return matchEvent;
+      }
+      points = cols.get(2).text();
+      if (!points.equals("\u00a0"))
+        pointsMade = true;
+      playersLink = cols.get(1).select("a");
+      actions = ConvertHelper.returnActionType(awayTeamAction, pointsMade, playersLink);
+      scoreSummary = cols.get(3).text();
       matchEvent =
-          new MatchEvent(actionType, firstAction, pointsMadeAwayTeam, timestamp, quarter, score);
+          new MatchEvent(timestamp, awayTeamAction, actions, points, scoreSummary, quarter);
     }
-
-    // UBACITI PROMENU tj. UPDATE AKO JE NEKO DAO KOS DA SE PRIKAZE KOLIKO POENA JE DAO
-    // (cols.get(2))
-
 
     return matchEvent;
   }
 
-  public LinkedList<MatchEvent> returnMatchEvents(String pageUrl) {
-    // Match match = new Match();
+  public LinkedList<MatchEvent> returnMatchEvents(Document doc) {
     LinkedList<MatchEvent> matchEvents = new LinkedList<MatchEvent>();
-    Document doc = JsoupHelper.connectToLivePage(pageUrl);
-    if (doc == null)
-      return matchEvents;
 
     Elements rows = doc.select("table#pbp tr");
     for (int i = 0; i < rows.size(); i++) {
-      if (rows.get(i).select("td").text().isEmpty())
+      Element row = rows.get(i);
+      if (row.select("th").size() > 0) {
+        if (row.childNodeSize() == 3)
+          quarter = row.text();
         continue;
-      MatchEvent matchEvent = returnMatchEvent(rows.get(i));
+      }
+
+      MatchEvent matchEvent = returnMatchEvent(row);
+      System.out.println(matchEvent);
       matchEvents.add(matchEvent);
-      // ispisi red
-      System.out.println(rows.get(i).text());
 
-      // OVDE SMO UCITALI CELU LINIJU tj. MATCH EVENT
-      // prva kolona timestamp, action
-      // Elements cols = rows.get(i).select("td");
-
-
-      // System.out.println("");
     }
+    quarter = "1st";
     // setMatchEvents(matchEvents);
     return matchEvents;
   }
 
-  public Match returnMatchById(String id) {
+  public Match returnMatch(String id) {
     Match match = null;
     String url = "https://www.basketball-reference.com/boxscores/pbp/" + id + ".html";
     Document doc = JsoupHelper.connectToLivePage(url);
@@ -92,27 +89,31 @@ public class JSoupMatchParser {
     String date = dt[2] + dt[3] + dt[4];
     String pointsAwayTeam = scorebox.select("div.score").select("div").get(0).text();
     String pointsHomeTeam = scorebox.select("div.score").get(1).text();
-    LinkedList<MatchEvent> matchEvents = returnMatchEvents(url);
+    LinkedList<MatchEvent> matchEvents = returnMatchEvents(doc);
     match = new Match(date, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, matchEvents);
+    // System.out.println(match);
     return match;
   }
 
-  public Match returnMatch(Element row, Elements cols) {
+
+  public Match returnOlderMatch(Element row, Elements cols) {
     Match match = null;
     String date = row.select("th").first().text();
-    String awayTeam = cols.get(1).text();
-    String pointsAwayTeam = cols.get(2).text();
-    String homeTeam = cols.get(3).text();
-    String pointsHomeTeam = cols.get(4).text();
-    String pbpURL = cols.get(5).select("a").first().attr("abs:href");
-    LinkedList<MatchEvent> matchEvents = returnMatchEvents(pbpURL);
-    match = new Match(date, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, matchEvents);
+    String awayTeam = cols.get(0).text();
+    String pointsAwayTeam = cols.get(1).text();
+    String homeTeam = cols.get(2).text();
+    String pointsHomeTeam = cols.get(3).text();
+    match = new Match(date, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, null);
+    System.out.println(match);
     return match;
   }
 
-  public LinkedList<Match> returnMatchesFromMonth(String url) {
+
+  public LinkedList<Match> returnMatchesFromMonth(int year, String month) {
     LinkedList<Match> matches = new LinkedList<Match>();
-    Document doc = JsoupHelper.connectToLivePage(url);
+    Match match = null;
+    Document doc = JsoupHelper.connectToLivePage("https://www.basketball-reference.com/leagues/NBA_"
+        + year + "_games-" + month.toLowerCase() + ".html");
     if (doc == null)
       return matches;
 
@@ -120,11 +121,18 @@ public class JSoupMatchParser {
     for (int i = 0; i < rows.size(); i++) {
       Element row = rows.get(i);
       Elements cols = row.select("td");
-      if (cols.isEmpty())
+      if (cols.isEmpty() || cols.get(cols.size() - 4).text().isEmpty())
         continue;
-      Match match = returnMatch(row, cols);
+      if (year < 2001)
+        match = returnOlderMatch(row, cols);
+      else {
+        String matchId = cols.get(cols.size() - 4).select("a").attr("href");
+        matchId = matchId.substring(11, matchId.length() - 5);
+        // System.out.println(matchId);
+        match = returnMatch(matchId);
+
+      }
       matches.add(match);
-      System.out.println(match);
     }
     return matches;
   }
@@ -142,12 +150,9 @@ public class JSoupMatchParser {
     String[] monthsArray = months.split(" ");
 
     for (int i = 0; i < monthsArray.length; i++) {
-      String monthUrl = "https://www.basketball-reference.com/leagues/NBA_2019_games-"
-          + monthsArray[i].toLowerCase() + ".html";
-      matches = returnMatchesFromMonth(monthUrl);
+      matches = returnMatchesFromMonth(year, monthsArray[i]);
       seasonMatches.addAll(matches);
     }
-    System.out.println(seasonMatches);
     season = new Season(year, seasonMatches, null);
 
     return season;

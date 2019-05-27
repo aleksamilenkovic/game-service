@@ -2,6 +2,7 @@ package com.mozzartbet.gameservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.parser.JSoupMatchParser;
 import com.mozzartbet.gameservice.parser.JSoupTeamParser;
 
@@ -20,14 +21,18 @@ public class GameServiceApplication {
     // CITANJE SVIH SEZONA OD 1978
     // LinkedList<LinkedList<Team>> t =teamParse.readTeamsFromSpecificSeasonTillNow(1978);
     // teamParse.readTeamsFromSpecificSeasonTillNow(1999);
-    // matchParse.returnMatch("https://www.basketball-reference.com/boxscores/pbp/201905160GSW.html");
+    Match match = matchParse.returnMatch("201905160GSW");
 
     // Match match = matchParse
-    // matchParse.returnMatchById("201810160BOS");
+
+    // matchParse.returnMatch("201810160BOS");
+    // LinkedList<Team> teams = teamParse.readTeamsFromSeason(2001);
+
     // System.out.println(match);
-    // LinkedList<Match> matches = matchParse.returnMatchesFromMonth(
-    // "https://www.basketball-reference.com/leagues/NBA_2019_games-april.html");
-    // Season s = matchParse.returnSeasonMatches(2019);
+    // LinkedList<Match> matches = matchParse.returnMatchesFromMonth(2001, "May");
+
+    // Season s = matchParse.returnSeasonMatches(2001);
+
   }
 
 }
