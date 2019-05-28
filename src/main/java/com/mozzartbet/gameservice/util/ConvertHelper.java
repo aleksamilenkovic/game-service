@@ -32,6 +32,8 @@ public abstract class ConvertHelper {
       Elements playersLink) {
     ActionType[] type = null;
     String[] playersId;
+    if (playersLink.isEmpty())
+      return null;
     String firstPlayerId = playersLink.first().attr("abs:href");
     firstPlayerId = returnPlayerId(firstPlayerId);
     if (playersLink.size() == 2) {
