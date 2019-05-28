@@ -1,5 +1,7 @@
 package com.mozzartbet.gameservice.util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import org.jsoup.select.Elements;
 import com.mozzartbet.gameservice.domain.ActionType;
 import com.mozzartbet.gameservice.domain.actiontype.FGAttempt;
@@ -25,6 +27,14 @@ public abstract class ConvertHelper {
     return id;
   }
 
+  public static double roundDecimal(double value, int places) {
+    if (places < 0)
+      throw new IllegalArgumentException();
+
+    BigDecimal bd = new BigDecimal(value);
+    bd = bd.setScale(places, RoundingMode.HALF_UP);
+    return bd.doubleValue();
+  }
 
   // Ovoj metodi ce biti prosledjena akcija kao string i proverice koji igraci su ucestvovali u
   // akciji i sta su uradili.

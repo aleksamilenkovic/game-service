@@ -6,20 +6,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import com.mozzartbet.gameservice.exception.UrlException;
 
 public class JsoupHelper {
-  public static Document connectToLivePage(String pageUrl) {
+  public static Document connectToLivePage(String pageUrl) throws UrlException {
     URL url;
     Document doc = null;
     try {
       url = new URL(pageUrl);
       doc = Jsoup.parse(url, 3000);
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-      return doc;
-    } catch (IOException e) {
-      e.printStackTrace();
-      return doc;
+    } catch (Exception e) {
+      throw new UrlException(pageUrl);
     }
     return doc;
   }
@@ -28,7 +25,7 @@ public class JsoupHelper {
     Document doc = null;
     try {
 
-      String filePath = "path/to/file" + fileName + ".html";
+      String filePath = "src/test/resources/" + fileName + ".html";
       doc = Jsoup.parse(new File(filePath), "utf-8");
     } catch (MalformedURLException e) {
       e.printStackTrace();

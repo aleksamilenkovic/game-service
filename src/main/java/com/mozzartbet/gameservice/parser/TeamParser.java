@@ -7,19 +7,25 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.domain.Team;
+import com.mozzartbet.gameservice.exception.UrlException;
 import com.mozzartbet.gameservice.util.ConvertHelper;
 import com.mozzartbet.gameservice.util.JsoupHelper;
 
 
 
-public class JSoupTeamParser {
+public class TeamParser {
 
 
   public void readPlayers(String pageUrl) {
     // first method for exersice jsoup-
-    Document doc = JsoupHelper.connectToLivePage(pageUrl);
-    if (doc == null)
+    Document doc;
+    try {
+      doc = JsoupHelper.connectToLivePage(pageUrl);
+    } catch (UrlException e) {
+      System.out.println(e);
       return;
+    }
+
 
     Elements rows = doc.select("table#roster tr");
     System.out.println("\n\n\nPlayers:   Position:  Height:  W:  Birth Date:  E:  College:  ");
@@ -58,9 +64,14 @@ public class JSoupTeamParser {
   public Team returnTeam(String pageUrl, String teamName) {
     Team t = new Team();
     t.setTeamName(teamName);
-    Document doc = JsoupHelper.connectToLivePage(pageUrl);
-    if (doc == null)
+    Document doc;
+    try {
+      doc = JsoupHelper.connectToLivePage(pageUrl);
+    } catch (UrlException e) {
+      System.out.println(e);
       return null;
+    }
+
 
     Elements rows = doc.select("table#roster tr");
     t.setPlayers(returnPlayers(rows));
@@ -71,10 +82,14 @@ public class JSoupTeamParser {
   public LinkedList<Team> readTeamsFromSeason(int seasonYear) {
     String url = "https://www.basketball-reference.com/leagues/NBA_" + seasonYear + ".html";
     LinkedList<Team> teams = new LinkedList<Team>();
-    Document doc = JsoupHelper.connectToLivePage(url);
-    Elements rows = null;
-    if (doc == null)
+    Document doc;
+    try {
+      doc = JsoupHelper.connectToLivePage(url);
+    } catch (UrlException e) {
+      System.out.println(e);
       return null;
+    }
+    Elements rows = null;
 
     if (seasonYear > 1970)
       rows = doc.select("table#divs_standings_E tr.full_table");
@@ -88,7 +103,7 @@ public class JSoupTeamParser {
         String link = firstColumn.attr("abs:href");
 
         Team t = returnTeam(link, firstColumn.text());
-        t.showTeam();
+        // t.showTeam();
         teams.add(t);
       }
       if (seasonYear <= 1970)

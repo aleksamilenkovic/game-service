@@ -6,6 +6,15 @@ public class FGAttempt extends ActionType {
   boolean miss;
   boolean threePointShoot;
 
+  public boolean isMiss() {
+    return miss;
+  }
+
+  public boolean isThreePointShoot() {
+    return threePointShoot;
+  }
+
+
   public FGAttempt(boolean miss, boolean threePointShoot, String playerId) {
     super(playerId);
     this.miss = miss;

@@ -8,10 +8,11 @@ import com.mozzartbet.gameservice.domain.ActionType;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.MatchEvent;
 import com.mozzartbet.gameservice.domain.Season;
+import com.mozzartbet.gameservice.exception.UrlException;
 import com.mozzartbet.gameservice.util.ConvertHelper;
 import com.mozzartbet.gameservice.util.JsoupHelper;
 
-public class JSoupMatchParser {
+public class MatchParser {
   String quarter = "";
 
   public MatchEvent returnMatchEvent(Element row) {
@@ -27,7 +28,7 @@ public class JSoupMatchParser {
     ActionType[] actions;
     if (awayTeamAction.equals("\u00a0")) {
       points = cols.get(4).text();
-      if (!points.isEmpty())
+      if (!points.equals("\u00a0"))
         pointsMade = true;
       homeTeamAction = cols.get(5).text();
       playersLink = cols.get(5).select("a");
@@ -67,7 +68,7 @@ public class JSoupMatchParser {
       }
 
       MatchEvent matchEvent = returnMatchEvent(row);
-      System.out.println(matchEvent);
+      // System.out.println(matchEvent);
       matchEvents.add(matchEvent);
 
     }
@@ -76,19 +77,29 @@ public class JSoupMatchParser {
     return matchEvents;
   }
 
-  public Match returnMatch(String id) {
+  public Match returnMatch(String id, String fileName) {
     Match match = null;
+    Document doc = null;
     String url = "https://www.basketball-reference.com/boxscores/pbp/" + id + ".html";
-    Document doc = JsoupHelper.connectToLivePage(url);
-    if (doc == null)
+    try {
+      if (fileName == null) // AKO STAVIMO DA JE FILE NULL ONDA PARSIRAMO SA ONLINE STRANE
+        doc = JsoupHelper.connectToLivePage(url);
+      else // povezujemo se na lokalnu stranicu iz /src/test/resources/
+        doc = JsoupHelper.connectToLocalPage(fileName);
+    } catch (UrlException e) {
+      System.out.println(e);
       return match;
+    }
+
     Element scorebox = doc.getElementsByClass("scorebox").first();
-    String awayTeam = scorebox.select("strong").get(0).text();
-    String homeTeam = scorebox.select("strong").get(1).text();
+    Elements teamNamesDiv = scorebox.select("strong");
+    Elements teamPoints = scorebox.select("div.score");
+    String awayTeam = teamNamesDiv.get(0).text();
+    String homeTeam = teamNamesDiv.get(1).text();
     String[] dt = doc.select("div.scorebox_meta").select("div").first().text().split(" ");
     String date = dt[2] + dt[3] + dt[4];
-    String pointsAwayTeam = scorebox.select("div.score").select("div").get(0).text();
-    String pointsHomeTeam = scorebox.select("div.score").get(1).text();
+    String pointsAwayTeam = teamPoints.select("div").get(0).text();
+    String pointsHomeTeam = teamPoints.get(1).text();
     LinkedList<MatchEvent> matchEvents = returnMatchEvents(doc);
     match = new Match(date, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, matchEvents);
     // System.out.println(match);
@@ -104,7 +115,7 @@ public class JSoupMatchParser {
     String homeTeam = cols.get(2).text();
     String pointsHomeTeam = cols.get(3).text();
     match = new Match(date, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, null);
-    System.out.println(match);
+    // System.out.println(match);
     return match;
   }
 
@@ -112,11 +123,14 @@ public class JSoupMatchParser {
   public LinkedList<Match> returnMatchesFromMonth(int year, String month) {
     LinkedList<Match> matches = new LinkedList<Match>();
     Match match = null;
-    Document doc = JsoupHelper.connectToLivePage("https://www.basketball-reference.com/leagues/NBA_"
-        + year + "_games-" + month.toLowerCase() + ".html");
-    if (doc == null)
+    Document doc = null;
+    try {
+      doc = JsoupHelper.connectToLivePage("https://www.basketball-reference.com/leagues/NBA_" + year
+          + "_games-" + month.toLowerCase() + ".html");
+    } catch (UrlException e) {
+      System.out.println(e);
       return matches;
-
+    }
     Elements rows = doc.select("table#schedule tbody").first().select("tr");
     for (int i = 0; i < rows.size(); i++) {
       Element row = rows.get(i);
@@ -129,7 +143,7 @@ public class JSoupMatchParser {
         String matchId = cols.get(cols.size() - 4).select("a").attr("href");
         matchId = matchId.substring(11, matchId.length() - 5);
         // System.out.println(matchId);
-        match = returnMatch(matchId);
+        match = returnMatch(matchId, null);
 
       }
       matches.add(match);
@@ -138,13 +152,16 @@ public class JSoupMatchParser {
   }
 
   public Season returnSeasonMatches(int year) {
-    LinkedList<Match> seasonMatches = new LinkedList<Match>();
-    LinkedList<Match> matches = null;
-    Document doc = JsoupHelper.connectToLivePage(
-        "https://www.basketball-reference.com/leagues/NBA_" + year + "_games.html");
-    Season season = null;
-    if (doc == null)
-      return season;
+    LinkedList<Match> seasonMatches = new LinkedList<Match>(), matches;
+    Document doc;
+    try {
+      doc = JsoupHelper.connectToLivePage(
+          "https://www.basketball-reference.com/leagues/NBA_" + year + "_games.html");
+    } catch (UrlException e) {
+      System.out.println(e);
+      return null;
+    }
+
 
     String months = doc.getElementsByClass("filter").first().text();
     String[] monthsArray = months.split(" ");
@@ -153,7 +170,7 @@ public class JSoupMatchParser {
       matches = returnMatchesFromMonth(year, monthsArray[i]);
       seasonMatches.addAll(matches);
     }
-    season = new Season(year, seasonMatches, null);
+    Season season = new Season(year, seasonMatches, null);
 
     return season;
   }
