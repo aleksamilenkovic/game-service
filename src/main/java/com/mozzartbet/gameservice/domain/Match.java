@@ -7,8 +7,7 @@ import lombok.Data;
 @Data
 public class Match {
 
-  // private Quarter[] quarters;
-  // private LinkedList<Quarter> overtimes;
+  private String matchId;
   private String date;
   private String awayTeam;
   private String finalScore;
@@ -33,7 +32,7 @@ public class Match {
   }
 
   public Match(String date, String awayTeam, String awayTeamPoints, String homeTeam,
-      String homeTeamPoints, LinkedList<MatchEvent> matchEvents) {
+      String homeTeamPoints, LinkedList<MatchEvent> matchEvents, String matchId) {
     this.date = date;
     this.homeTeam = homeTeam;
     this.awayTeam = awayTeam;
@@ -43,6 +42,7 @@ public class Match {
         ConvertHelper.tryParseInt(awayTeamPoints) ? Integer.parseInt(awayTeamPoints) : 0;
     this.matchEvents = matchEvents;
     this.finalScore = this.awayTeamPoints + " - " + this.homeTeamPoints;
+    this.matchId = matchId;
   }
 
   @Override

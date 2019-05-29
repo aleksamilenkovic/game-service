@@ -16,6 +16,7 @@ public abstract class ConvertHelper {
       Integer.parseInt(value);
       return true;
     } catch (NumberFormatException e) {
+      System.out.println("Can't parse " + value + " to integer...");
       return false;
     }
   }

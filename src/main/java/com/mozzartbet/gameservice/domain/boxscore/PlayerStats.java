@@ -13,7 +13,7 @@ public class PlayerStats {
   private String playerId;
   private int fieldGoals = 0;
   private int fieldGoalAttempts = 0;
-  private double fildGoalPercentage = 0;
+  private double fieldGoalPercentage = 0;
   private int threePointFG = 0;
   private int threePointFGAttempts = 0;
   private double threePointFGPercentage = 0;

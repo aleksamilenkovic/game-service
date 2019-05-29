@@ -1,21 +1,23 @@
-package com.mozzartbet.gameservice.domain.boxscore;
+package com.mozzartbet.gameservice.stats;
 
 import java.util.LinkedList;
 import com.mozzartbet.gameservice.domain.ActionType;
-import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.MatchEvent;
 import com.mozzartbet.gameservice.domain.Player;
-import com.mozzartbet.gameservice.domain.Team;
 import com.mozzartbet.gameservice.domain.actiontype.FGAttempt;
 import com.mozzartbet.gameservice.domain.actiontype.FreeThrow;
 import com.mozzartbet.gameservice.domain.actiontype.OtherType;
 import com.mozzartbet.gameservice.domain.actiontype.Rebound;
 import com.mozzartbet.gameservice.domain.actiontype.ReboundType;
+import com.mozzartbet.gameservice.domain.boxscore.PlayerStats;
 import com.mozzartbet.gameservice.util.ConvertHelper;
 
 public class StatisticCaclulator {
+  // private Map<String, PlayerStats> playersStats;
 
-  public static PlayerStats calculatePlayerStats(Match match, String playerId) {
+  public static PlayerStats calculatePlayerStats(LinkedList<MatchEvent> matchEvents,
+      String playerId) {
+
     PlayerStats playerStats;
     int fieldGoals = 0, fieldGoalAttempts = 0, threePointFG = 0, threePointFGAttempts = 0,
         freeThrows = 0, freeThrowAttempts = 0, offensiveRebounds = 0, defensiveRebounds = 0,
@@ -23,8 +25,7 @@ public class StatisticCaclulator {
         points = 0, i = 0; // i je za actions[i] prvi ili drugi igrac u akciji
     double fieldGoalPercentage = 0, threePointFGPercentage = 0, freeThrowPercentage = 0;
 
-    LinkedList<MatchEvent> events = match.getMatchEvents();
-    for (MatchEvent event : events) {
+    for (MatchEvent event : matchEvents) {
       if (!event.getNeutralAction().isEmpty() || event.getActions() == null
           || event.getActions().length == 0)
         continue;
@@ -101,18 +102,22 @@ public class StatisticCaclulator {
     return playerStats;
   }
 
-  public static LinkedList<PlayerStats> returnTeamStatsIndividual(Match match, Team team) {
+  public static LinkedList<PlayerStats> returnTeamStatsIndividual(
+      LinkedList<MatchEvent> matchEvents, LinkedList<Player> players) {
+
     LinkedList<PlayerStats> playerStats = new LinkedList<PlayerStats>();
-    if (match.getAwayTeam().equals(team.getTeamName())
-        || match.getHomeTeam().equals(team.getTeamName())) {
-      for (Player p : team.getPlayers()) {
-        PlayerStats ps = calculatePlayerStats(match, p.getId());
-        System.out.println(ps);
+    if (matchEvents != null && players != null) {
+      for (Player p : players) {
+        PlayerStats ps = calculatePlayerStats(matchEvents, p.getId());
+        // System.out.println(ps);
         playerStats.add(ps);
       }
-    }
+    } else
+      return null;
 
     return playerStats;
   }
+
+
 
 }

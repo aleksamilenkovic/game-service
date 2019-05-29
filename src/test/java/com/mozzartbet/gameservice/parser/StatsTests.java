@@ -6,7 +6,7 @@ import org.junit.Test;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.Team;
 import com.mozzartbet.gameservice.domain.boxscore.PlayerStats;
-import com.mozzartbet.gameservice.domain.boxscore.StatisticCaclulator;
+import com.mozzartbet.gameservice.stats.StatisticCaclulator;
 
 public class StatsTests {
   @Test
@@ -19,7 +19,7 @@ public class StatsTests {
     Team team = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
         "Portland Trail Blazers");
     LinkedList<PlayerStats> playersStats =
-        StatisticCaclulator.returnTeamStatsIndividual(match, team);
+        StatisticCaclulator.returnTeamStatsIndividual(match.getMatchEvents(), team.getPlayers());
     for (PlayerStats ps : playersStats) {
       System.out.println(ps);
     }

@@ -1,14 +1,12 @@
 package com.mozzartbet.gameservice;
 
-import java.util.LinkedList;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.Team;
-import com.mozzartbet.gameservice.domain.boxscore.PlayerStats;
-import com.mozzartbet.gameservice.domain.boxscore.StatisticCaclulator;
 import com.mozzartbet.gameservice.parser.MatchParser;
 import com.mozzartbet.gameservice.parser.TeamParser;
+import com.mozzartbet.gameservice.stats.MatchStats;
 
 @SpringBootApplication
 public class GameServiceApplication {
@@ -51,11 +49,10 @@ public class GameServiceApplication {
     // Season s = matchParse.returnSeasonMatches(2001);
     // s.setTeams(teamParse.readTeamsFromSeason(2001));
     // System.out.println(s);
-    LinkedList<PlayerStats> playersStats =
-        StatisticCaclulator.returnTeamStatsIndividual(match, team);
-    for (PlayerStats ps : playersStats) {
-      System.out.println(ps);
-    }
+    MatchStats matchStats = new MatchStats();
+    matchStats.calculateTeamStatsOnMatch(match, team);
+
+    System.out.println(matchStats);
   }
 
 }
