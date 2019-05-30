@@ -35,9 +35,10 @@ public class GameServiceApplication {
 
     Match match = matchParse.returnMatch("201905160GSW",
         "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _ Basketball-Reference.com");
-    Team team = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
+    Team team1 = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
         "Portland Trail Blazers");
-
+    Team team2 = teamParse.returnTeam("https://www.basketball-reference.com/teams/GSW/2019.html",
+        "Golden State Warriors");
     // PlayerStats ps = StatisticCaclulator.calculatePlayerStats(match, "k/kanteen01");
     // System.out.println(ps);
 
@@ -50,9 +51,12 @@ public class GameServiceApplication {
     // s.setTeams(teamParse.readTeamsFromSeason(2001));
     // System.out.println(s);
     MatchStats matchStats = new MatchStats();
-    matchStats.calculateTeamStatsOnMatch(match, team);
+    matchStats.calculateMatchStats(match, team1, team2);
+    System.out.println(matchStats.getLineScore());
+    matchStats.sortByPoints();
+    System.out.println(matchStats.getAwayTeamPlayerStats());
+    System.out.println(matchStats.getHomeTeamPlayerStats());
 
-    System.out.println(matchStats);
   }
 
 }

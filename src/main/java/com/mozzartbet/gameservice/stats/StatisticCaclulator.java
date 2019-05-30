@@ -1,6 +1,9 @@
 package com.mozzartbet.gameservice.stats;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.mozzartbet.gameservice.domain.ActionType;
 import com.mozzartbet.gameservice.domain.MatchEvent;
 import com.mozzartbet.gameservice.domain.Player;
@@ -14,9 +17,11 @@ import com.mozzartbet.gameservice.util.ConvertHelper;
 
 public class StatisticCaclulator {
   // private Map<String, PlayerStats> playersStats;
+  static Table<String, String, Integer> lineScore = HashBasedTable.create();
+  static String awayTeam = "", homeTeam = "";
 
   public static PlayerStats calculatePlayerStats(LinkedList<MatchEvent> matchEvents,
-      String playerId) {
+      String playerId, boolean quarterPointsEmpty) {
 
     PlayerStats playerStats;
     int fieldGoals = 0, fieldGoalAttempts = 0, threePointFG = 0, threePointFGAttempts = 0,
@@ -24,12 +29,32 @@ public class StatisticCaclulator {
         totalRebounds = 0, assists = 0, steals = 0, blocks = 0, turnovers = 0, personalFouls = 0,
         points = 0, i = 0; // i je za actions[i] prvi ili drugi igrac u akciji
     double fieldGoalPercentage = 0, threePointFGPercentage = 0, freeThrowPercentage = 0;
-
+    int pointsTeamMade;
     for (MatchEvent event : matchEvents) {
       if (!event.getNeutralAction().isEmpty() || event.getActions() == null
           || event.getActions().length == 0)
         continue;
       ActionType actions[] = event.getActions();
+
+      if (quarterPointsEmpty) {
+        if (event.getPointsMadeAwayTeam() <= 0) {
+          if (event.getPointsMadeHomeTeam() > 0) {
+            pointsTeamMade = event.getPointsMadeHomeTeam();
+            lineScore.put(event.getQuarter(), homeTeam,
+                (lineScore.get(event.getQuarter(), homeTeam) != null
+                    ? lineScore.get(event.getQuarter(), homeTeam) + pointsTeamMade
+                    : 0 + pointsTeamMade));
+          }
+
+
+        } else {
+          pointsTeamMade = event.getPointsMadeAwayTeam();
+          lineScore.put(event.getQuarter(), awayTeam,
+              (lineScore.get(event.getQuarter(), awayTeam) != null
+                  ? lineScore.get(event.getQuarter(), awayTeam) + pointsTeamMade
+                  : 0 + pointsTeamMade));
+        }
+      }
 
       if (actions[0].getPlayerId().equals(playerId))
         i = 0;
@@ -102,13 +127,14 @@ public class StatisticCaclulator {
     return playerStats;
   }
 
-  public static LinkedList<PlayerStats> returnTeamStatsIndividual(
-      LinkedList<MatchEvent> matchEvents, LinkedList<Player> players) {
+  public static ArrayList<PlayerStats> returnTeamStatsIndividual(LinkedList<MatchEvent> matchEvents,
+      LinkedList<Player> players) {
 
-    LinkedList<PlayerStats> playerStats = new LinkedList<PlayerStats>();
+    ArrayList<PlayerStats> playerStats = new ArrayList<PlayerStats>();
     if (matchEvents != null && players != null) {
       for (Player p : players) {
-        PlayerStats ps = calculatePlayerStats(matchEvents, p.getId());
+        boolean quarterPointsEmpty = lineScore.isEmpty();
+        PlayerStats ps = calculatePlayerStats(matchEvents, p.getId(), quarterPointsEmpty);
         // System.out.println(ps);
         playerStats.add(ps);
       }

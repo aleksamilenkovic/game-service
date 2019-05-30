@@ -1,7 +1,7 @@
 package com.mozzartbet.gameservice.parser;
 
 import static org.junit.Assert.assertEquals;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import org.junit.Test;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.Team;
@@ -18,7 +18,7 @@ public class StatsTests {
         "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _ Basketball-Reference.com");
     Team team = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
         "Portland Trail Blazers");
-    LinkedList<PlayerStats> playersStats =
+    ArrayList<PlayerStats> playersStats =
         StatisticCaclulator.returnTeamStatsIndividual(match.getMatchEvents(), team.getPlayers());
     for (PlayerStats ps : playersStats) {
       System.out.println(ps);

@@ -13,8 +13,8 @@ public class MatchEvent {
   private ActionType actions[];
   private String homeTeamAction = "";
   private String awayTeamAction = "";
-  private String pointsMadeHomeTeam = "";
-  private String pointsMadeAwayTeam = "";
+  private int pointsMadeHomeTeam = 0;
+  private int pointsMadeAwayTeam = 0;
   private String neutralAction = "";
   private String quarter;
 
@@ -26,7 +26,7 @@ public class MatchEvent {
   }
 
   // konstruktor za drugi tim tj homeTeam ako je nesto uradio
-  public MatchEvent(String timestamp, String scoreSummary, String pointsMadeHomeTeam,
+  public MatchEvent(String timestamp, String scoreSummary, int pointsMadeHomeTeam,
       String homeTeamAction, ActionType actions[], String quarter) {
     this.timestamp = timestamp;
     this.scoreSummary = scoreSummary;
@@ -38,7 +38,7 @@ public class MatchEvent {
 
   // konstruktor za prvi tim ako je nesto uradio
   public MatchEvent(String timestamp, String awayTeamAction, ActionType actions[],
-      String pointsMadeAwayTeam, String scoreSummary, String quarter) {
+      int pointsMadeAwayTeam, String scoreSummary, String quarter) {
     this.timestamp = timestamp;
     this.awayTeamAction = awayTeamAction;
     this.actions = actions;

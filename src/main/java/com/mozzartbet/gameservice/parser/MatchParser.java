@@ -23,19 +23,22 @@ public class MatchParser {
     String scoreSummary;
     String homeTeamAction;
     String points;
+    int p = 0;
     boolean pointsMade = false;
     Elements playersLink;
     ActionType[] actions;
     if (awayTeamAction.equals("\u00a0")) {
       points = cols.get(4).text();
-      if (!points.equals("\u00a0"))
+      if (!points.equals("\u00a0")) {
+        points.substring(1);
+        p = Integer.parseInt(points, 10);
         pointsMade = true;
+      }
       homeTeamAction = cols.get(5).text();
       playersLink = cols.get(5).select("a");
       actions = ConvertHelper.returnActionType(homeTeamAction, pointsMade, playersLink);
       scoreSummary = cols.get(3).text();
-      matchEvent =
-          new MatchEvent(timestamp, scoreSummary, points, homeTeamAction, actions, quarter);
+      matchEvent = new MatchEvent(timestamp, scoreSummary, p, homeTeamAction, actions, quarter);
     } else {
       if (cols.size() == 2) {
         // neutralan dogadjaj
@@ -43,13 +46,15 @@ public class MatchParser {
         return matchEvent;
       }
       points = cols.get(2).text();
-      if (!points.equals("\u00a0"))
+      if (!points.equals("\u00a0")) {
+        points.substring(1);
+        p = Integer.parseInt(points, 10);
         pointsMade = true;
+      }
       playersLink = cols.get(1).select("a");
       actions = ConvertHelper.returnActionType(awayTeamAction, pointsMade, playersLink);
       scoreSummary = cols.get(3).text();
-      matchEvent =
-          new MatchEvent(timestamp, awayTeamAction, actions, points, scoreSummary, quarter);
+      matchEvent = new MatchEvent(timestamp, awayTeamAction, actions, p, scoreSummary, quarter);
     }
 
     return matchEvent;

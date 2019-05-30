@@ -27,8 +27,8 @@ public class MatchTests {
     Match match = jmp.returnMatch("201905160GSW",
         "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _ Basketball-Reference.com");
     PlayerStats ps =
-        StatisticCaclulator.calculatePlayerStats(match.getMatchEvents(), "k/kanteen01");
-    System.out.println(ps);
+        StatisticCaclulator.calculatePlayerStats(match.getMatchEvents(), "k/kanteen01", false);
+    // System.out.println(ps);
   }
 
   @Test
@@ -49,7 +49,8 @@ public class MatchTests {
    * ovo je dug test posto vraca celu sezonu live pa je pod komentarom da ga ne bih pokretao svaki
    * put
    */
-  @Test
+
+  // @Test
   public void testReturningSeason() {
     MatchParser jmp = new MatchParser();
     Season s = jmp.returnSeasonMatches(2012);
