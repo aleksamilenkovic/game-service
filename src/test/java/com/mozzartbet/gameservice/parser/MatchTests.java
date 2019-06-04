@@ -6,8 +6,6 @@ import org.hamcrest.core.IsNull;
 import org.junit.Test;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.Season;
-import com.mozzartbet.gameservice.domain.boxscore.PlayerStats;
-import com.mozzartbet.gameservice.stats.StatisticCaclulator;
 
 public class MatchTests {
 
@@ -21,15 +19,6 @@ public class MatchTests {
     assertThat(match, IsNull.notNullValue());
   }
 
-  @Test
-  public void testPlayerStats() {
-    MatchParser jmp = new MatchParser();
-    Match match = jmp.returnMatch("201905160GSW",
-        "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _ Basketball-Reference.com");
-    PlayerStats ps =
-        StatisticCaclulator.calculatePlayerStats(match.getMatchEvents(), "k/kanteen01", false);
-    // System.out.println(ps);
-  }
 
   @Test
   public void testMatchFinalScore() {
@@ -56,5 +45,7 @@ public class MatchTests {
     Season s = jmp.returnSeasonMatches(2012);
     assertEquals(s.getSeasonYear(), 2012);
   }
+
+
 
 }

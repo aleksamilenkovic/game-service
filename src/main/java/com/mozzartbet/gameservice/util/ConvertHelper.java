@@ -22,10 +22,7 @@ public abstract class ConvertHelper {
   }
 
   public static String returnPlayerId(String link) {
-    String id = null;
-    if (link != null)
-      id = link.substring(link.length() - 16, link.length() - 5);
-    return id;
+    return link != null ? link.substring(link.length() - 16, link.length() - 5) : null;
   }
 
   public static double roundDecimal(double value, int places) {

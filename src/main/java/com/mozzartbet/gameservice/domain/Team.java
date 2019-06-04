@@ -1,12 +1,14 @@
 package com.mozzartbet.gameservice.domain;
 
 import java.util.LinkedList;
+import java.util.List;
 import lombok.Data;
 
 @Data
 public class Team {
   private String teamName;
-  private LinkedList<Player> players;
+  private String teamId;
+  private List<Player> players;
 
   public Team() {
     teamName = "";

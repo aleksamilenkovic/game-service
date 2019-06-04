@@ -1,15 +1,15 @@
 package com.mozzartbet.gameservice.domain;
 
-import java.util.LinkedList;
+import java.util.List;
 import lombok.Data;
 
 @Data
 public class Season {
   private int seasonYear;
-  private LinkedList<Match> seasonMatches;
-  private LinkedList<Team> teams;
+  private List<Match> seasonMatches;
+  private List<Team> teams;
 
-  public Season(int seasonYear, LinkedList<Match> seasonMatches, LinkedList<Team> teams) {
+  public Season(int seasonYear, List<Match> seasonMatches, List<Team> teams) {
     this.seasonYear = seasonYear;
     this.seasonMatches = seasonMatches;
     this.teams = teams;

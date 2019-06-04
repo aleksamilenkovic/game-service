@@ -1,7 +1,7 @@
 package com.mozzartbet.gameservice.parser;
 
 import static org.junit.Assert.assertEquals;
-import java.util.LinkedList;
+import java.util.List;
 import org.junit.Test;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.Season;
@@ -9,19 +9,18 @@ import com.mozzartbet.gameservice.domain.Season;
 public class JunitTest {
 
 
-
   @Test
   public void testMatchPbpFirstRow(String matchID, String fileName) {
     MatchParser jmp = new MatchParser();
     Match match = jmp.returnMatch(matchID, fileName);
-    assertEquals(match.getMatchEvents().get(0).getTimestamp(), "12:00.0");
+    assertEquals(match.getQuarters().get(0).getMatchEvents().get(0).getTimestamp(), "12:00.0");
   }
 
 
   @Test
   public void testNumberOfMatchesInMonth(int year, String month, int numberOfMatches) {
     MatchParser jmp = new MatchParser();
-    LinkedList<Match> matches = jmp.returnMatchesFromMonth(year, month);
+    List<Match> matches = jmp.returnMatchesFromMonth(year, month);
     assertEquals(matches.size(), numberOfMatches);
     // System.out.println(matches);
   }

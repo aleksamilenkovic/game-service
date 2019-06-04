@@ -44,20 +44,18 @@ public class TeamParser {
 
   }
 
-  public LinkedList<Player> returnPlayers(Elements rows) {
+  public LinkedList<Player> returnPlayers(Elements rows, String teamId) {
     LinkedList<Player> listOfPlayers = new LinkedList<Player>();
 
-    rows.remove(0);
-    for (int i = 0; i < rows.size(); i++) {
+    for (int i = 1; i < rows.size(); i++) {
       Elements cols = rows.get(i).select("td");
       Element header = rows.get(i).select("th").first();
       String id = ConvertHelper.returnPlayerId(cols.get(0).select("a").first().attr("abs:href"));
       Player player = new Player(header.text(), cols.get(0).text(), cols.get(1).text(),
           cols.get(2).text(), cols.get(3).text(), cols.get(4).text(), cols.get(5).text(),
-          cols.get(6).text(), cols.get(7).text(), id);
+          cols.get(6).text(), cols.get(7).text(), id, teamId);
       listOfPlayers.add(player);
     }
-
     return listOfPlayers;
   }
 
@@ -70,11 +68,10 @@ public class TeamParser {
     } catch (UrlException e) {
       System.out.println(e);
       return null;
-    }
-
-
+    } // POR/2019.html
+    String teamId = pageUrl.substring(pageUrl.length() - 13, pageUrl.length() - 5);
     Elements rows = doc.select("table#roster tr");
-    t.setPlayers(returnPlayers(rows));
+    t.setPlayers(returnPlayers(rows, teamId));
     return t;
   }
 
