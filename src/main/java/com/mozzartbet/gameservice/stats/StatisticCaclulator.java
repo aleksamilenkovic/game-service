@@ -12,6 +12,7 @@ import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.MatchEvent;
 import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.domain.Quarter;
+import com.mozzartbet.gameservice.domain.actiontype.EntersOrLeft;
 import com.mozzartbet.gameservice.domain.actiontype.FGAttempt;
 import com.mozzartbet.gameservice.domain.actiontype.FreeThrow;
 import com.mozzartbet.gameservice.domain.actiontype.OtherType;
@@ -31,6 +32,17 @@ public class StatisticCaclulator {
   /////////////// ******************\\\\\\\\\\\\\\\\\\\
 
   /////////////// ****************** DVE PRIVREMENE METODE ///////////////
+  private static void minutesPlayed(List<ActionType[]> minutesPlayed, String quarter) {
+    minutesPlayed.forEach(actions -> {
+      EntersOrLeft enters = (EntersOrLeft) actions[0], left = (EntersOrLeft) actions[1];
+      PlayerStats stats = (PlayerStats) playersStats.get(enters.getPlayerId());
+      stats.setTimeEntered(enters.getTime());
+      PlayerStats stats2 = (PlayerStats) playersStats.get(left.getPlayerId());
+      stats2.setTimeLeft(left.getTime());
+      stats2.addMinutes();
+      stats2.setTimeEntered(12);
+    });
+  }
 
   private static void calculatePlayersPercentage(String home, String away) {
     // Iterator it = playersStats.entrySet().iterator();
@@ -40,6 +52,9 @@ public class StatisticCaclulator {
       // Map.Entry pair = (Map.Entry) it.next();
       PlayerStats stats = (PlayerStats) entry.getValue();
       stats.summary();
+
+      /// OVAJ IF ELSE KASNIJE PREBACITI U MATCH STATS DA IZRACUNA ZA TIM NA KRAJU DA NE BI ZA
+      /// SVAKOG IGRACA PROLAZIO
       if (stats.getTeamid().equals(home))
         homeTeam.teamSummary(stats.getFieldGoals(), stats.getFieldGoalAttempts(),
             stats.getThreePointFG(), stats.getThreePointFGAttempts(), stats.getFreeThrows(),
@@ -59,6 +74,7 @@ public class StatisticCaclulator {
     playersStats.put(home, homeTeam);
     playersStats.put(away, awayTeam);
   }
+
 
   private static void calculatePlayerStats(List<ActionType[]> shots, List<ActionType[]> rebounds,
       List<ActionType[]> freeThrows, List<ActionType[]> turnOversSteals, List<ActionType[]> fouls) {
@@ -101,7 +117,7 @@ public class StatisticCaclulator {
     });
   }
 
-  private static void returnPlayersStats(List<MatchEvent> matchEvents) {
+  private static void returnPlayersStats(List<MatchEvent> matchEvents, String quarter) {
 
     List<ActionType[]> shots = matchEvents.stream()
         .filter(x -> (x.getActions() != null) && (x.getActions()[0] instanceof FGAttempt))
@@ -118,8 +134,11 @@ public class StatisticCaclulator {
     List<ActionType[]> fouls = matchEvents.stream()
         .filter(x -> x.getActions() != null && x.getActions()[0].getType() == OtherType.FOUL)
         .map(x -> x.getActions()).collect(Collectors.toList());
+    List<ActionType[]> minutesPlayed = matchEvents.stream()
+        .filter(x -> x.getActions() != null && x.getActions()[0] instanceof EntersOrLeft)
+        .map(x -> x.getActions()).collect(Collectors.toList());
     calculatePlayerStats(shots, rebounds, freeThrows, turnoversSteals, fouls);
-
+    minutesPlayed(minutesPlayed, quarter);
   }
 
 
@@ -134,7 +153,8 @@ public class StatisticCaclulator {
     for (String playerId : awayPlayersId)
       playersStats.put(playerId, new PlayerStats(playerId, match.getAwayTeam()));
     for (Quarter q : match.getQuarters())
-      returnPlayersStats(q.getMatchEvents());// metoda puni mapu sa statistikama igraca
+      returnPlayersStats(q.getMatchEvents(), q.getQuarterName());// metoda puni mapu sa statistikama
+                                                                 // igraca
 
     calculatePlayersPercentage(match.getHomeTeam(), match.getAwayTeam());
     return playersStats;
@@ -216,12 +236,12 @@ public class StatisticCaclulator {
           blocks++;
         } else if (actions[i].getType() == OtherType.STEAL) {
           steals++;
-        } else if (actions[i].getType() == OtherType.ENTERSTHECOURT) {
+          // } else if (actions[i].getType() == OtherType.ENTERSTHECOURT) {
           plusMinusWhenEntered =
               event.getAwayTeamAction().length() > 2 ? event.getResultHomeLead() * (-1)
                   : event.getResultHomeLead();
 
-        } else if (actions[i].getType() == OtherType.LEAVESTHECOURT) {
+          // } else if (actions[i].getType() == OtherType.LEAVESTHECOURT) {
 
           /*
            * if (minutesPlayed == 0) minutesPlayed = event.getQuarter().contains("OT") ? (float)
@@ -261,7 +281,7 @@ public class StatisticCaclulator {
     playerStats = new PlayerStats(playerId, fieldGoals, fieldGoalAttempts, fieldGoalPercentage,
         threePointFG, threePointFGAttempts, threePointFGPercentage, freeThrows, freeThrowAttempts,
         freeThrowPercentage, offensiveRebounds, defensiveRebounds, totalRebounds, assists, steals,
-        blocks, turnovers, personalFouls, points, plusMinus, minutesPlayed, "");
+        blocks, turnovers, personalFouls, points, plusMinus, minutesPlayed, 0, 0, "");
     return playerStats;
   }
 

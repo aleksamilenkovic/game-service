@@ -1,8 +1,6 @@
 package com.mozzartbet.gameservice.util;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,18 +19,16 @@ public class JsoupHelper {
     return doc;
   }
 
-  public static Document connectToLocalPage(String fileName) {
+  public static Document connectToLocalPage(String fileName) throws UrlException {
     Document doc = null;
     try {
 
       String filePath = "src/test/resources/" + fileName + ".html";
       doc = Jsoup.parse(new File(filePath), "utf-8");
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-      return doc;
-    } catch (IOException e) {
-      e.printStackTrace();
-      return doc;
+      if (doc == null)
+        throw new UrlException(fileName);
+    } catch (Exception e) {
+      throw new UrlException(fileName);
     }
     return doc;
   }

@@ -19,19 +19,17 @@ public class MatchEvent {
   private String quarter;
   private int resultHomeLead;
 
-  public MatchEvent(String neutralAction, String timestamp, String quarter) {
+  public MatchEvent(String neutralAction, float timestamp, String quarter) {
     this.neutralAction = neutralAction;
-    this.timestamp =
-        Float.parseFloat(timestamp.substring(0, timestamp.length() - 2).replace(':', '.'));
+    this.timestamp = timestamp;
     this.quarter = quarter;
     actions = null;
   }
 
   // konstruktor za drugi tim tj homeTeam ako je nesto uradio
-  public MatchEvent(String timestamp, String scoreSummary, int pointsMadeHomeTeam,
+  public MatchEvent(float timestamp, String scoreSummary, int pointsMadeHomeTeam,
       String homeTeamAction, ActionType actions[], String quarter) {
-    this.timestamp =
-        Float.parseFloat(timestamp.substring(0, timestamp.length() - 2).replace(':', '.'));
+    this.timestamp = timestamp;
     this.scoreSummary = scoreSummary;
     String result[] = scoreSummary.split("-");
     resultHomeLead = Integer.parseInt(result[0]) - Integer.parseInt(result[1]);
@@ -42,10 +40,9 @@ public class MatchEvent {
   }
 
   // konstruktor za prvi tim ako je nesto uradio
-  public MatchEvent(String timestamp, String awayTeamAction, ActionType actions[],
+  public MatchEvent(float timestamp, String awayTeamAction, ActionType actions[],
       int pointsMadeAwayTeam, String scoreSummary, String quarter) {
-    this.timestamp =
-        Float.parseFloat(timestamp.substring(0, timestamp.length() - 2).replace(':', '.'));
+    this.timestamp = timestamp;
     this.awayTeamAction = awayTeamAction;
     this.actions = actions;
     this.pointsMadeAwayTeam = pointsMadeAwayTeam;

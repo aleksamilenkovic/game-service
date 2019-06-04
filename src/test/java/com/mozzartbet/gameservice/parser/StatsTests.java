@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 import com.mozzartbet.gameservice.domain.Match;
-import com.mozzartbet.gameservice.domain.Team;
 import com.mozzartbet.gameservice.domain.boxscore.PlayerStats;
 import com.mozzartbet.gameservice.stats.MatchStats;
 import com.mozzartbet.gameservice.stats.StatisticCaclulator;
@@ -16,14 +15,16 @@ public class StatsTests {
   @Test
   public void testPlayerStats() {
     MatchParser matchParse = new MatchParser();
-    TeamParser teamParse = new TeamParser();
+    // TeamParser teamParse = new TeamParser();
     Match match = matchParse.returnMatch("201905160GSW",
         "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _ Basketball-Reference.com");
-    Team team = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
-        "Portland Trail Blazers");
-    Team team2 = teamParse.returnTeam("https://www.basketball-reference.com/teams/GSW/2019.html",
-        "Golden State Warriors");
-    team.getPlayers().addAll(team2.getPlayers());
+    /*
+     * Team team = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
+     * "Portland Trail Blazers"); Team team2 =
+     * teamParse.returnTeam("https://www.basketball-reference.com/teams/GSW/2019.html",
+     * "Golden State Warriors");
+     */
+    // team.getPlayers().addAll(team2.getPlayers());
     Map<String, PlayerStats> playersStats = StatisticCaclulator.returnPlayersStatsIndividual(match,
         match.getHomePlayersID(), match.getAwayPlayersID());
     assertEquals(playersStats.get("c/curryst01").getPoints(), 37);
@@ -34,28 +35,31 @@ public class StatsTests {
   public void testTeamStats() {
     // TEST DA LI JE LILARD NA MECU DAO 23 POENA
     MatchParser matchParse = new MatchParser();
-    TeamParser teamParse = new TeamParser();
+    // TeamParser teamParse = new TeamParser();
     Match match = matchParse.returnMatch("201905160GSW",
         "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _ Basketball-Reference.com");
-    Team team = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
-        "Portland Trail Blazers");
-    Team team2 = teamParse.returnTeam("https://www.basketball-reference.com/teams/GSW/2019.html",
-        "Golden State Warriors");
-    team.getPlayers().addAll(team2.getPlayers());
+    /*
+     * Team team = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
+     * "Portland Trail Blazers"); Team team2 =
+     * teamParse.returnTeam("https://www.basketball-reference.com/teams/GSW/2019.html",
+     * "Golden State Warriors");
+     */
+    // team.getPlayers().addAll(team2.getPlayers());
     Map<String, PlayerStats> playersStats = (HashMap<String, PlayerStats>) StatisticCaclulator
         .returnPlayersStatsIndividual(match, match.getHomePlayersID(), match.getAwayPlayersID());
     /*
      * for (PlayerStats ps : playersStats) { System.out.println(ps); }
      */
     System.out.println(playersStats);
+    // da li je broj
     assertFalse(playersStats == null);
     // assertEquals(playersStats.get(0).getPoints(), 23);
   }
 
-  // @Test
+  @Test
   public void testMatchStats() {
     MatchParser matchParse = new MatchParser();
-    // TeamParser teamParse = new TeamParser();
+    // +TeamParser teamParse = new TeamParser();
     Match match = matchParse.returnMatch("201905160GSW",
         "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _ Basketball-Reference.com");
     /*

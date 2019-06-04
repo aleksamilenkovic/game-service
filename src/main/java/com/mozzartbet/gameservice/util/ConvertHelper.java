@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import org.jsoup.select.Elements;
 import com.mozzartbet.gameservice.domain.ActionType;
+import com.mozzartbet.gameservice.domain.actiontype.EntersOrLeft;
 import com.mozzartbet.gameservice.domain.actiontype.FGAttempt;
 import com.mozzartbet.gameservice.domain.actiontype.FreeThrow;
 import com.mozzartbet.gameservice.domain.actiontype.OtherType;
@@ -37,7 +38,7 @@ public abstract class ConvertHelper {
   // Ovoj metodi ce biti prosledjena akcija kao string i proverice koji igraci su ucestvovali u
   // akciji i sta su uradili.
   public static ActionType[] returnActionType(String action, boolean pointsMade,
-      Elements playersLink) {
+      Elements playersLink, float time) {
     ActionType[] type = null;
     String[] playersId;
     if (playersLink.isEmpty())
@@ -97,8 +98,8 @@ public abstract class ConvertHelper {
     } else if (action.contains("foul")) {
       type[0] = new ActionType(playersId[0], OtherType.FOUL);
     } else if (action.contains("enters")) {
-      type[0] = new ActionType(playersId[0], OtherType.ENTERSTHECOURT);
-      type[1] = new ActionType(playersId[1], OtherType.LEAVESTHECOURT);
+      type[0] = new EntersOrLeft(playersId[0], time);
+      type[1] = new EntersOrLeft(playersId[1], time);
     }
 
     return type;

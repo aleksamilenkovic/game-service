@@ -1,5 +1,7 @@
 package com.mozzartbet.gameservice;
 
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.mozzartbet.gameservice.domain.Match;
@@ -7,10 +9,15 @@ import com.mozzartbet.gameservice.parser.MatchParser;
 import com.mozzartbet.gameservice.stats.MatchStats;
 
 @SpringBootApplication
-public class GameServiceApplication {
+public class GameServiceApplication implements ApplicationRunner {
 
   public static void main(String[] args) {
     SpringApplication.run(GameServiceApplication.class, args);
+
+  }
+
+  @Override
+  public void run(ApplicationArguments args) throws Exception {
     // TeamParser teamParse = new TeamParser();
     MatchParser matchParse = new MatchParser();
     // teamParse.readPlayers("https://www.basketball-reference.com/teams/ORL/2019.html");
@@ -56,6 +63,7 @@ public class GameServiceApplication {
     System.out.println(matchStats.getBestPlayersStats() + "\n");
     System.out.println("All players stats\n" + matchStats.getPlayersStats() + "\n");
     System.out.println("Line score: \n" + matchStats.getLineScore());
+
   }
 
 }

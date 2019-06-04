@@ -20,8 +20,9 @@ public class MatchParser {
   public MatchEvent returnMatchEvent(Element row) {
     MatchEvent matchEvent = null;
     Elements cols = row.select("td"), playersLink;
-    String timestamp = cols.get(0).text(), awayTeamAction = cols.get(1).text(), scoreSummary,
+    String time = cols.get(0).text(), awayTeamAction = cols.get(1).text(), scoreSummary,
         homeTeamAction, points;
+    float timestamp = Float.parseFloat(time.substring(0, time.length() - 2).replace(':', '.'));
     int p = 0;
     boolean pointsMade = false;
     ActionType[] actions;
@@ -35,7 +36,7 @@ public class MatchParser {
       }
       homeTeamAction = cols.get(5).text();
       playersLink = cols.get(5).select("a");
-      actions = ConvertHelper.returnActionType(homeTeamAction, pointsMade, playersLink);
+      actions = ConvertHelper.returnActionType(homeTeamAction, pointsMade, playersLink, timestamp);
       scoreSummary = cols.get(3).text();
       matchEvent = new MatchEvent(timestamp, scoreSummary, p, homeTeamAction, actions, quarter);
     } else {
@@ -51,7 +52,7 @@ public class MatchParser {
         pointsMade = true;
       }
       playersLink = cols.get(1).select("a");
-      actions = ConvertHelper.returnActionType(awayTeamAction, pointsMade, playersLink);
+      actions = ConvertHelper.returnActionType(awayTeamAction, pointsMade, playersLink, timestamp);
       scoreSummary = cols.get(3).text();
       matchEvent = new MatchEvent(timestamp, awayTeamAction, actions, p, scoreSummary, quarter);
     }
@@ -163,8 +164,7 @@ public class MatchParser {
     String[] dt = doc.select("div.scorebox_meta").select("div").first().text().split(" ");
     String date = dt[2] + dt[3] + dt[4];
 
-    List<Quarter> quarters = returnMatchEvents(doc);
-    match = new Match(date, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, quarters, matchId);
+    match = new Match(date, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, null, matchId);
     // System.out.println(match);
     return match;
   }

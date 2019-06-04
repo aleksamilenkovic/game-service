@@ -2,6 +2,7 @@ package com.mozzartbet.gameservice.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import java.util.List;
 import org.hamcrest.core.IsNull;
 import org.junit.Test;
 import com.mozzartbet.gameservice.domain.Match;
@@ -28,12 +29,14 @@ public class MatchTests {
     assertEquals(match.getFinalScore(), "111 - 114");
   }
 
-  /*
-   * @Test public void testNumberOfMatchesInMonth() { MatchParser jmp = new MatchParser();
-   * LinkedList<Match> matches = jmp.returnMatchesFromMonth(2001, "october");
-   * assertEquals(matches.size(), 13); // System.out.println(matches); }
-   * 
-   */
+
+  @Test
+  public void testNumberOfMatchesInMonth() {
+    MatchParser jmp = new MatchParser();
+    List<Match> matches = jmp.returnMatchesFromMonth(2001, "october");
+    assertEquals(matches.size(), 13); // System.out.println(matches); }
+  }
+
   /*
    * ovo je dug test posto vraca celu sezonu live pa je pod komentarom da ga ne bih pokretao svaki
    * put

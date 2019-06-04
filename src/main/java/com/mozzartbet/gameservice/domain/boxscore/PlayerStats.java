@@ -34,6 +34,8 @@ public class PlayerStats {
   private int points = 0;
   private int plusMinus = 0;
   private float minutesPlayed = 0;
+  private float timeEntered = 12;
+  private float timeLeft = 0;
   private String teamid;
 
   public void teamSummary(int fieldGoals, int fieldGoalAttempts, int threePointFG,
@@ -118,6 +120,11 @@ public class PlayerStats {
 
   public PlayerStats() {
     // TODO Auto-generated constructor stub
+  }
+
+  public void addMinutes() {
+    minutesPlayed += timeEntered - timeLeft;
+
   }
 
 
