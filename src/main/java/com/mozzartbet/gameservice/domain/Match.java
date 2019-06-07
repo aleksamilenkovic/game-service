@@ -40,10 +40,8 @@ public class Match {
     this.date = date;
     this.homeTeam = homeTeam;
     this.awayTeam = awayTeam;
-    this.homeTeamPoints =
-        ConvertHelper.tryParseInt(homeTeamPoints) ? Integer.parseInt(homeTeamPoints) : 0;
-    this.awayTeamPoints =
-        ConvertHelper.tryParseInt(awayTeamPoints) ? Integer.parseInt(awayTeamPoints) : 0;
+    this.homeTeamPoints = ConvertHelper.tryParseInt(homeTeamPoints);
+    this.awayTeamPoints = ConvertHelper.tryParseInt(awayTeamPoints);
     this.quarters = quarters;
     this.finalScore = this.awayTeamPoints + " - " + this.homeTeamPoints;
     this.matchId = matchId;

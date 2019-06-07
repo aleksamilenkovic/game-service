@@ -5,6 +5,7 @@ import java.util.List;
 import org.junit.Test;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.Season;
+import com.mozzartbet.gameservice.exception.UrlException;
 
 public class JunitTest {
 
@@ -25,9 +26,10 @@ public class JunitTest {
     // System.out.println(matches);
   }
 
-  public void testReturningSeason(int year) {
+  public void testReturningSeason(int year) throws UrlException {
     MatchParser jmp = new MatchParser();
-    Season s = jmp.returnSeasonMatches(year);
+    Season s = null;
+    s = jmp.returnSeasonMatches(year);
     assertEquals(s.getSeasonYear(), year);
   }
 

@@ -7,6 +7,7 @@ import org.hamcrest.core.IsNull;
 import org.junit.Test;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.Season;
+import com.mozzartbet.gameservice.exception.UrlException;
 
 public class MatchTests {
 
@@ -14,8 +15,7 @@ public class MatchTests {
   @Test
   public void testMatchNotNull() {
     MatchParser jmp = new MatchParser();
-    Match match = jmp.returnMatch("201905200POR",
-        "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _ Basketball-Reference.com");
+    Match match = jmp.returnMatch("201112260PHO", null);
     // assertEquals(match.getMatchEvents().get(0).getTimestamp(), "12:00.0");
     assertThat(match, IsNull.notNullValue());
   }
@@ -24,17 +24,16 @@ public class MatchTests {
   @Test
   public void testMatchFinalScore() {
     MatchParser jmp = new MatchParser();
-    Match match = jmp.returnMatch("201904100CHO",
-        "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _ Basketball-Reference.com");
-    assertEquals(match.getFinalScore(), "111 - 114");
+    Match match = jmp.returnMatch("201905200POR", "pbp201905200POR");
+    assertEquals(match.getFinalScore(), "119 - 117");
   }
 
 
   @Test
   public void testNumberOfMatchesInMonth() {
     MatchParser jmp = new MatchParser();
-    List<Match> matches = jmp.returnMatchesFromMonth(2001, "october");
-    assertEquals(matches.size(), 13); // System.out.println(matches); }
+    List<Match> matches = jmp.returnMatchesFromMonth(2012, "december");
+    assertEquals(56, matches.size()); // System.out.println(matches); }
   }
 
   /*
@@ -43,9 +42,10 @@ public class MatchTests {
    */
 
   // @Test
-  public void testReturningSeason() {
+  public void testReturningSeason() throws UrlException {
     MatchParser jmp = new MatchParser();
-    Season s = jmp.returnSeasonMatches(2012);
+    Season s = null;
+    s = jmp.returnSeasonMatches(2012);
     assertEquals(s.getSeasonYear(), 2012);
   }
 

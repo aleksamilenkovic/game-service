@@ -13,6 +13,7 @@ import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.exception.UrlException;
 import com.mozzartbet.gameservice.util.ConvertHelper;
 import com.mozzartbet.gameservice.util.JsoupHelper;
+import com.mozzartbet.gameservice.util.LoadPage;
 
 public class MatchParser {
   String quarter = "1st Q";
@@ -21,40 +22,42 @@ public class MatchParser {
     MatchEvent matchEvent = null;
     Elements cols = row.select("td"), playersLink;
     String time = cols.get(0).text(), awayTeamAction = cols.get(1).text(), scoreSummary,
-        homeTeamAction, points;
+        homeTeamAction, p;
     float timestamp = Float.parseFloat(time.substring(0, time.length() - 2).replace(':', '.'));
-    int p = 0;
+    int points = 0;
     boolean pointsMade = false;
     ActionType[] actions;
 
-    if (awayTeamAction.equals("\u00a0")) {
-      points = cols.get(4).text();
-      if (!points.equals("\u00a0")) {
-        points.substring(1);
-        p = Integer.parseInt(points, 10);
+    if (awayTeamAction.isEmpty() || awayTeamAction.equals("\u00a0")) {
+      p = cols.get(4).text();
+      if (!p.isEmpty() && !p.equals("\u00a0")) {
+        p.substring(1);
+        points = Integer.parseInt(p, 10);
         pointsMade = true;
       }
       homeTeamAction = cols.get(5).text();
       playersLink = cols.get(5).select("a");
       actions = ConvertHelper.returnActionType(homeTeamAction, pointsMade, playersLink, timestamp);
       scoreSummary = cols.get(3).text();
-      matchEvent = new MatchEvent(timestamp, scoreSummary, p, homeTeamAction, actions, quarter);
+      matchEvent = MatchEvent.createForHomeTeam(scoreSummary, timestamp, points, homeTeamAction,
+          actions, quarter);
     } else {
       if (cols.size() == 2) {
         // neutralan dogadjaj
         matchEvent = new MatchEvent(awayTeamAction, timestamp, quarter);
         return matchEvent;
       }
-      points = cols.get(2).text();
-      if (!points.equals("\u00a0")) {
-        points.substring(1);
-        p = Integer.parseInt(points, 10);
+      p = cols.get(2).text();
+      if (!p.isEmpty() && !p.equals("\u00a0")) {
+        p.substring(1);
+        points = Integer.parseInt(p, 10);
         pointsMade = true;
       }
       playersLink = cols.get(1).select("a");
       actions = ConvertHelper.returnActionType(awayTeamAction, pointsMade, playersLink, timestamp);
       scoreSummary = cols.get(3).text();
-      matchEvent = new MatchEvent(timestamp, awayTeamAction, actions, p, scoreSummary, quarter);
+      matchEvent = MatchEvent.createForAwayTeam(scoreSummary, timestamp, points, awayTeamAction,
+          actions, quarter);
     }
 
     return matchEvent;
@@ -69,8 +72,7 @@ public class MatchParser {
     for (Element row : rows) {
       if (row.select("th").size() > 0) {
         if (row.childNodeSize() == 3) {
-          quarters.add(new Quarter(quarter, quarterEvents,
-              quarterEvents.get(quarterEvents.size() - 2).getScoreSummary()));
+          quarters.add(new Quarter(quarter, quarterEvents));
           quarterEvents = new ArrayList<MatchEvent>();
           quarter = row.text();
         }
@@ -79,8 +81,7 @@ public class MatchParser {
       // System.out.println(returnMatchEvent(row));
       quarterEvents.add(returnMatchEvent(row));
     }
-    quarters.add(new Quarter(quarter, quarterEvents,
-        quarterEvents.get(quarterEvents.size() - 2).getScoreSummary()));
+    quarters.add(new Quarter(quarter, quarterEvents));
     quarter = "1st Q";
     // setMatchEvents(matchEvents);
     return quarters;
@@ -113,17 +114,12 @@ public class MatchParser {
     Match match = null;
     Document doc = null;
     String url = "https://www.basketball-reference.com/boxscores/pbp/" + matchId + ".html";
-    int matchYear;
-    if (!ConvertHelper.tryParseInt(matchId.substring(0, 4)))
-      return null;
-    matchYear = Integer.parseInt(matchId.substring(0, 4));
-    if (matchYear < 2001)
-      return returnOlderMatch(matchId, fileName);
     try {
-      if (fileName == null) // AKO STAVIMO DA JE FILE NULL ONDA PARSIRAMO SA ONLINE STRANE
-        doc = JsoupHelper.connectToLivePage(url);
-      else // povezujemo se na lokalnu stranicu iz /src/test/resources/
-        doc = JsoupHelper.connectToLocalPage(fileName);
+      int matchYear = ConvertHelper.tryParseInt(matchId.substring(0, 4));
+      if (matchYear < 2001)
+        return returnOlderMatch(matchId, fileName);
+      doc = fileName == null ? JsoupHelper.connectToLivePage(url)
+          : JsoupHelper.connectToLocalPage(fileName);
     } catch (UrlException e) {
       System.out.println(e);
       return match;
@@ -197,16 +193,12 @@ public class MatchParser {
     return matches;
   }
 
-  public Season returnSeasonMatches(int year) {
+  public Season returnSeasonMatches(int year) throws UrlException {
     List<Match> seasonMatches = new ArrayList<Match>(), matches;
-    Document doc;
-    try {
-      doc = JsoupHelper.connectToLivePage(
-          "https://www.basketball-reference.com/leagues/NBA_" + year + "_games.html");
-    } catch (UrlException e) {
-      System.out.println(e);
-      return null;
-    }
+    String url =
+        String.format("https://www.basketball-reference.com/leagues/NBA_%d_games.html", year);
+    LoadPage lp = LoadPage.parseUrl(url);
+    Document doc = lp.parse();
 
     String months = doc.getElementsByClass("filter").first().text();
     String[] monthsArray = months.split(" ");

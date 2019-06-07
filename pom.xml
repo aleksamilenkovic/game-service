@@ -17,6 +17,9 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<jsoup.version>1.12.1</jsoup.version>
+		<lombok.version>1.18.8</lombok.version>
+		<guava.version>27.1-jre</guava.version>
 	</properties>
 
 	<dependencies>
@@ -35,27 +38,22 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.8.3</version>
+			<version>${jsoup.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>27.1-jre</version>
+			<version>${guava.version}</version>
 		</dependency>
 		
 	<dependency>
 		<groupId>org.projectlombok</groupId>
 		<artifactId>lombok</artifactId>
-		<version>1.18.8</version>
+		<version>${lombok.version}</version><!--$NO-MVN-MAN-VER$-->
 		<scope>provided</scope>
 	</dependency>
-	
-<dependency>
-  <groupId>com.google.guava</groupId>
-  <artifactId>guava</artifactId>
-  <version>27.1-jre</version>
-</dependency>
+
 	</dependencies>
 
 	<build>

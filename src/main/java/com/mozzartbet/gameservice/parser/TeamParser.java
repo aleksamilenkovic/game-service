@@ -51,9 +51,11 @@ public class TeamParser {
       Elements cols = rows.get(i).select("td");
       Element header = rows.get(i).select("th").first();
       String id = ConvertHelper.returnPlayerId(cols.get(0).select("a").first().attr("abs:href"));
-      Player player = new Player(header.text(), cols.get(0).text(), cols.get(1).text(),
+      int expirience;
+      expirience = !cols.get(6).text().equals("R") ? Integer.parseInt(cols.get(6).text()) : 0;
+      Player player = new Player(id, teamId, header.text(), cols.get(0).text(), cols.get(1).text(),
           cols.get(2).text(), cols.get(3).text(), cols.get(4).text(), cols.get(5).text(),
-          cols.get(6).text(), cols.get(7).text(), id, teamId);
+          expirience, cols.get(7).text());
       listOfPlayers.add(player);
     }
     return listOfPlayers;
@@ -86,12 +88,12 @@ public class TeamParser {
       System.out.println(e);
       return null;
     }
-    Elements rows = null;
-
-    if (seasonYear > 1970)
-      rows = doc.select("table#divs_standings_E tr.full_table");
-    else
-      rows = doc.select("table#divs_standings_ tr.full_table");
+    Elements rows = seasonYear > 1970 ? doc.select("table#divs_standings_E tr.full_table")
+        : doc.select("table#divs_standings_ tr.full_table");
+    /*
+     * if (seasonYear > 1970) rows = doc.select("table#divs_standings_E tr.full_table"); else rows =
+     * doc.select("table#divs_standings_ tr.full_table");
+     */
     for (int j = 0; j < 2; j++) {
       for (int i = 0; i < rows.size(); i++) {
         // dobijam sada sve redove jedne konferencije
@@ -107,8 +109,6 @@ public class TeamParser {
         break;
       rows = doc.select("table#divs_standings_W tr.full_table");
     }
-
-
     return teams;
   }
 

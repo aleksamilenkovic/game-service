@@ -51,7 +51,9 @@ public class MatchStats {
 
     // najbolji igraci po sortType-u
     statsByTeam();
+    showMatchStats();
     sort(sortType);
+    showBestPlayers();
   }
 
   private void createLineScore() {
@@ -87,7 +89,6 @@ public class MatchStats {
   }
 
   public void sortByPoints() {
-    System.out.println("BEST PLAYERS BY POINTS: ////");
     awayTeamPlayerStats.sort((Comparator.comparing(PlayerStats::getPoints)).reversed());
     homeTeamPlayerStats.sort((Comparator.comparing(PlayerStats::getPoints)).reversed());
     HashMap<String, Integer> map = new HashMap<String, Integer>();
@@ -99,7 +100,6 @@ public class MatchStats {
   }
 
   public void sortByAssists() {
-    System.out.println("BEST PLAYERS BY ASSISTS : ////");
     awayTeamPlayerStats.sort((Comparator.comparing(PlayerStats::getAssists)).reversed());
     homeTeamPlayerStats.sort((Comparator.comparing(PlayerStats::getAssists)).reversed());
     HashMap<String, Integer> map = new HashMap<String, Integer>();
@@ -111,7 +111,6 @@ public class MatchStats {
   }
 
   public void sortByRebounds() {
-    System.out.println("BEST PLAYERS BY REBOUNDS : ////");
     awayTeamPlayerStats.sort((Comparator.comparing(PlayerStats::getTotalRebounds)).reversed());
     homeTeamPlayerStats.sort((Comparator.comparing(PlayerStats::getTotalRebounds)).reversed());
     HashMap<String, Integer> map = new HashMap<String, Integer>();
@@ -137,4 +136,49 @@ public class MatchStats {
     playersStats.remove(match.getHomeTeam());
   }
 
+
+  public void showMatchStats() {
+    showLineScore();
+    showBoxScore();
+  }
+
+  public void showLineScore() {
+    Map<String, Integer> awayteamPointsByQuarters = lineScore.row(match.getAwayTeam());
+    Map<String, Integer> homeTeamPointsByQuarters = lineScore.row(match.getHomeTeam());
+    System.out.println("________________________________________________________________");
+    System.out.print("\t\t\t");
+    for (Quarter quarter : match.getQuarters())
+      System.out.print("| " + quarter.getQuarterName());
+    System.out.print("| TOTAL");
+    System.out.print("\n" + match.getAwayTeam() + ":");
+    for (Map.Entry<String, Integer> entry : awayteamPointsByQuarters.entrySet())
+      System.out.print("  |  " + entry.getValue());
+    System.out.print("\n" + match.getHomeTeam() + ":      ");
+    for (Map.Entry<String, Integer> entry : homeTeamPointsByQuarters.entrySet())
+      System.out.print("  |  " + entry.getValue());
+    System.out.println("\n________________________________________________________________\n");
+  }
+
+  public void showBoxScore() {
+    System.out.println("\n\n" + match.getAwayTeam() + "======================== Basic box score\n");
+    System.out.println(
+        "Players       | FG | FGA | FG% | 3P | 3PA | 3P% | FT | FTA | FT% | ORB | DRB TRB AST STL BLK TOV PF  PTS +/-");
+    for (PlayerStats ps : awayTeamPlayerStats)
+      System.out.println(ps);
+    System.out.println("\n\n" + match.getHomeTeam() + "======================== Basic box score\n");
+    for (PlayerStats ps : homeTeamPlayerStats)
+      System.out.println(ps);
+  }
+
+
+
+  public void showBestPlayers() {
+    int i = 0;
+    for (Map.Entry<String, Integer> entry : bestPlayersStats.entrySet()) {
+      System.out.print(entry.getKey() + "  :  " + (int) entry.getValue() + " | ");
+      if (i++ == 4)// najboljih pet po sortType-u
+        break;
+    }
+    System.out.println("\n________________________________________________________________\n");
+  }
 }

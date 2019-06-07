@@ -24,7 +24,7 @@ public class JsoupHelper {
     try {
 
       String filePath = "src/test/resources/" + fileName + ".html";
-      doc = Jsoup.parse(new File(filePath), "utf-8");
+      doc = Jsoup.parse(new File(filePath), "UTF-8", "");
       if (doc == null)
         throw new UrlException(fileName);
     } catch (Exception e) {

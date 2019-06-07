@@ -127,5 +127,24 @@ public class PlayerStats {
 
   }
 
+  private boolean didNotPlay() {
+    // kada budu gotovi minutesPlayed samo to proveriti je l = 0 i znaci da nije igrao
+    if (assists == 0 && fieldGoalAttempts == 0 && totalRebounds == 0 && personalFouls == 0
+        && steals == 0 && blocks == 0 && turnovers == 0)
+      return true;
+    return false;
+  }
+
+  @Override
+  public String toString() {
+    return didNotPlay() ? playerId + ":  " + "---------\t\tDID NOT PLAY\t\t--------"
+        : playerId + "   |  " + fieldGoals + " |  " + fieldGoalAttempts + " |" + fieldGoalPercentage
+            + "| " + threePointFG + " | " + threePointFGAttempts + "  |" + threePointFGPercentage
+            + "  | " + freeThrows + " | " + freeThrowAttempts + "  |" + freeThrowPercentage + "| "
+            + offensiveRebounds + " | " + defensiveRebounds + " | " + totalRebounds + " | "
+            + assists + " | " + steals + " | " + blocks + " | " + turnovers + " | " + personalFouls
+            + " | " + points + "|\n";
+  }
+
 
 }

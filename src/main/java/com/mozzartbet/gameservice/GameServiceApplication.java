@@ -59,10 +59,12 @@ public class GameServiceApplication implements ApplicationRunner {
     // s.setTeams(teamParse.readTeamsFromSeason(2001));
     // System.out.println(s);
     MatchStats matchStats = new MatchStats();
-    matchStats.calculateMatchStats(match, "points");
-    System.out.println(matchStats.getBestPlayersStats() + "\n");
-    System.out.println("All players stats\n" + matchStats.getPlayersStats() + "\n");
-    System.out.println("Line score: \n" + matchStats.getLineScore());
+    matchStats.calculateMatchStats(match, "rebound");
+    /*
+     * System.out.println(matchStats.getBestPlayersStats() + "\n");
+     * System.out.println("All players stats\n" + matchStats.getPlayersStats() + "\n");
+     * System.out.println("Line score: \n" + matchStats.getLineScore());
+     */
 
   }
 

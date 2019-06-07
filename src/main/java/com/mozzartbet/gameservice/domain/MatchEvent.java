@@ -1,8 +1,14 @@
 package com.mozzartbet.gameservice.domain;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MatchEvent {
   // private MatchEventType type;
   private String scoreSummary = "";
@@ -10,46 +16,54 @@ public class MatchEvent {
   // mogucnost za 2 tipa u jednoj akciji (npr pogodak i asistencija)
   // [VAZNO] pri prolazu kroz akciju (te 2) ako je prva rebound drugu PRESKOCITI jer je prazan
   // element. Takodje ako su akcije null znaci da je timski nesto uradjeno ili timeout
-  private ActionType actions[];
+  private ActionType actions[] = null;
   private String homeTeamAction = "";
   private String awayTeamAction = "";
   private int pointsMadeHomeTeam = 0;
   private int pointsMadeAwayTeam = 0;
   private String neutralAction = "";
   private String quarter;
-  private int resultHomeLead;
+  private int resultHomeLead;// ovaj field sluzice kasnije za racunanje plus minus;
 
   public MatchEvent(String neutralAction, float timestamp, String quarter) {
     this.neutralAction = neutralAction;
     this.timestamp = timestamp;
     this.quarter = quarter;
-    actions = null;
+  }// konstruktor za neutralnu akciju (jump ball, start/end of quarter, timeout
+
+
+  public static MatchEvent createForHomeTeam(String scoreSummary, float timestamp, int pointsMade,
+      String action, ActionType actions[], String quarter) {
+    return new MatchEvent(timestamp, scoreSummary, pointsMade, action, actions, quarter, true);
   }
 
-  // konstruktor za drugi tim tj homeTeam ako je nesto uradio
-  public MatchEvent(float timestamp, String scoreSummary, int pointsMadeHomeTeam,
-      String homeTeamAction, ActionType actions[], String quarter) {
+  public static MatchEvent createForAwayTeam(String scoreSummary, float timestamp, int pointsMade,
+      String action, ActionType actions[], String quarter) {
+    return new MatchEvent(timestamp, scoreSummary, pointsMade, action, actions, quarter, false);
+  }
+
+  // konstruktor koji generise MatchEvent u zavisnosti da li je away ili home team napravio akciju
+  private MatchEvent(float timestamp, String scoreSummary, int pointsMade, String action,
+      ActionType actions[], String quarter, boolean homeTeam) {
+    // boolean proverava da li je home ili away team uradio nesto
+    this.homeTeamAction =
+        homeTeam ? setHomeAction(action, pointsMade) : setAwayAction(action, pointsMade);
     this.timestamp = timestamp;
     this.scoreSummary = scoreSummary;
     String result[] = scoreSummary.split("-");
     resultHomeLead = Integer.parseInt(result[0]) - Integer.parseInt(result[1]);
-    this.pointsMadeHomeTeam = pointsMadeHomeTeam;
-    this.homeTeamAction = homeTeamAction;
     this.actions = actions;
     this.quarter = quarter;
   }
 
-  // konstruktor za prvi tim ako je nesto uradio
-  public MatchEvent(float timestamp, String awayTeamAction, ActionType actions[],
-      int pointsMadeAwayTeam, String scoreSummary, String quarter) {
-    this.timestamp = timestamp;
-    this.awayTeamAction = awayTeamAction;
-    this.actions = actions;
-    this.pointsMadeAwayTeam = pointsMadeAwayTeam;
-    this.scoreSummary = scoreSummary;
-    String result[] = scoreSummary.split("-");
-    resultHomeLead = Integer.parseInt(result[1]) - Integer.parseInt(result[0]);
-    this.quarter = quarter;
+  private String setHomeAction(String action, int pointsMade) {
+    this.pointsMadeHomeTeam = pointsMade;
+    return action;
   }
 
+  private String setAwayAction(String action, int pointsMade) {
+    this.awayTeamAction = action;
+    this.pointsMadeAwayTeam = pointsMade;
+    return "";
+  }
 }

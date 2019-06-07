@@ -12,13 +12,12 @@ import com.mozzartbet.gameservice.domain.actiontype.Rebound;
 import com.mozzartbet.gameservice.domain.actiontype.ReboundType;
 
 public abstract class ConvertHelper {
-  public static boolean tryParseInt(String value) {
+  public static int tryParseInt(String value) {
     try {
-      Integer.parseInt(value);
-      return true;
+      return Integer.parseInt(value);
     } catch (NumberFormatException e) {
       System.out.println("Can't parse " + value + " to integer...");
-      return false;
+      return 0;
     }
   }
 
@@ -43,13 +42,13 @@ public abstract class ConvertHelper {
     String[] playersId;
     if (playersLink.isEmpty())
       return null;
-    String firstPlayerId = playersLink.first().attr("abs:href");
+    String firstPlayerId = playersLink.get(0).attr("href");
     firstPlayerId = returnPlayerId(firstPlayerId);
     if (playersLink.size() == 2) {
       playersId = new String[2];
       type = new ActionType[2];
       playersId[0] = firstPlayerId;
-      playersId[1] = playersLink.get(1).attr("abs:href");
+      playersId[1] = playersLink.get(1).attr("href");
       playersId[1] = returnPlayerId(playersId[1]);
     } else if (playersLink.size() == 1) {
       type = new ActionType[1];

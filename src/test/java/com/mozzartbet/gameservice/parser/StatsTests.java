@@ -16,8 +16,7 @@ public class StatsTests {
   public void testPlayerStats() {
     MatchParser matchParse = new MatchParser();
     // TeamParser teamParse = new TeamParser();
-    Match match = matchParse.returnMatch("201905160GSW",
-        "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _ Basketball-Reference.com");
+    Match match = matchParse.returnMatch("201905160GSW", "pbp201905200POR");
     /*
      * Team team = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
      * "Portland Trail Blazers"); Team team2 =
@@ -36,8 +35,7 @@ public class StatsTests {
     // TEST DA LI JE LILARD NA MECU DAO 23 POENA
     MatchParser matchParse = new MatchParser();
     // TeamParser teamParse = new TeamParser();
-    Match match = matchParse.returnMatch("201905160GSW",
-        "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _ Basketball-Reference.com");
+    Match match = matchParse.returnMatch("201905160GSW", "pbp201905200POR");
     /*
      * Team team = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
      * "Portland Trail Blazers"); Team team2 =
@@ -60,8 +58,7 @@ public class StatsTests {
   public void testMatchStats() {
     MatchParser matchParse = new MatchParser();
     // +TeamParser teamParse = new TeamParser();
-    Match match = matchParse.returnMatch("201905160GSW",
-        "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _ Basketball-Reference.com");
+    Match match = matchParse.returnMatch("201905200POR", "pbp201905200POR");
     /*
      * Team team1 = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
      * "Portland Trail Blazers"); Team team2 =
@@ -71,7 +68,7 @@ public class StatsTests {
     MatchStats stats = new MatchStats();
     stats.calculateMatchStats(match, "");
 
-    assertEquals(stats.getHomeTeamStatsSummary().getPoints(), 114);
+    assertEquals(stats.getHomeTeamStatsSummary().getPoints(), 117);
 
   }
 

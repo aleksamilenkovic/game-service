@@ -30,8 +30,6 @@ public class StatisticCaclulator {
 
   /////////////// ****************** REFAKTORISANJE KODA KROZ OVE ///////////////
   /////////////// ******************\\\\\\\\\\\\\\\\\\\
-
-  /////////////// ****************** DVE PRIVREMENE METODE ///////////////
   private static void minutesPlayed(List<ActionType[]> minutesPlayed, String quarter) {
     minutesPlayed.forEach(actions -> {
       EntersOrLeft enters = (EntersOrLeft) actions[0], left = (EntersOrLeft) actions[1];
@@ -292,7 +290,7 @@ public class StatisticCaclulator {
     if (matchEvents != null && players != null) {
       for (Player p : players) {
         boolean quarterPointsEmpty = lineScore.isEmpty();
-        PlayerStats ps = calculatePlayerStats(matchEvents, p.getPLAYER_ID(), quarterPointsEmpty);
+        PlayerStats ps = calculatePlayerStats(matchEvents, p.getPlayer_id(), quarterPointsEmpty);
         System.out.println(ps);
         playerStats.add(ps);
       }
