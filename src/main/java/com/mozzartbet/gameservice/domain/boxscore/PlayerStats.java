@@ -1,6 +1,5 @@
 package com.mozzartbet.gameservice.domain.boxscore;
 
-import com.mozzartbet.gameservice.domain.actiontype.ReboundType;
 import com.mozzartbet.gameservice.util.ConvertHelper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -57,30 +56,34 @@ public class PlayerStats {
     this.personalFouls += personalFouls;
   }
 
-  public void addFG(boolean miss, boolean threepoint) {
+  public void add2point(boolean miss) {
     fieldGoalAttempts++;
-    if (!miss) {
-      if (threepoint) {
-        threePointFGAttempts++;
-        threePointFG++;
-      }
+    if (!miss)
       fieldGoals++;
-    } else if (threepoint)
-      threePointFGAttempts++;
   }
 
-  public void addReb(ReboundType type) {
-    if (type == ReboundType.OFFENSIVE)
+  public void add3point(boolean miss) {
+    fieldGoalAttempts++;
+    threePointFGAttempts++;
+    if (!miss) {
+      threePointFG++;
+      fieldGoals++;
+    }
+  }
+
+  public void addRebound(boolean offensive) {
+    if (offensive)
       offensiveRebounds++;
     else
       defensiveRebounds++;
   }
 
-  public void addFT(boolean miss) {
+  public void addFreeThrow(boolean miss) {
     freeThrowAttempts++;
     if (!miss)
       freeThrows++;
   }
+
 
   public boolean addAssistOrBlock(boolean miss) {
     if (miss)

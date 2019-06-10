@@ -5,12 +5,13 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import com.mozzartbet.gameservice.domain.ActionType;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.MatchEvent;
+import com.mozzartbet.gameservice.domain.MatchEventType;
 import com.mozzartbet.gameservice.domain.Quarter;
 import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.exception.UrlException;
+import com.mozzartbet.gameservice.util.MatchEventHelper;
 import com.mozzartbet.gameservice.util.ConvertHelper;
 import com.mozzartbet.gameservice.util.JsoupHelper;
 import com.mozzartbet.gameservice.util.LoadPage;
@@ -23,10 +24,11 @@ public class MatchParser {
     Elements cols = row.select("td"), playersLink;
     String time = cols.get(0).text(), awayTeamAction = cols.get(1).text(), scoreSummary,
         homeTeamAction, p;
+    String players[] = new String[2];
     float timestamp = Float.parseFloat(time.substring(0, time.length() - 2).replace(':', '.'));
     int points = 0;
     boolean pointsMade = false;
-    ActionType[] actions;
+    MatchEventType actionType = null;
 
     if (awayTeamAction.isEmpty() || awayTeamAction.equals("\u00a0")) {
       p = cols.get(4).text();
@@ -37,10 +39,12 @@ public class MatchParser {
       }
       homeTeamAction = cols.get(5).text();
       playersLink = cols.get(5).select("a");
-      actions = ConvertHelper.returnActionType(homeTeamAction, pointsMade, playersLink, timestamp);
+      players = MatchEventHelper.returnPlayersIds(playersLink);
+      if (players != null)
+        actionType = MatchEventHelper.returnActionType(homeTeamAction, pointsMade, timestamp);
       scoreSummary = cols.get(3).text();
       matchEvent = MatchEvent.createForHomeTeam(scoreSummary, timestamp, points, homeTeamAction,
-          actions, quarter);
+          actionType, quarter, players);
     } else {
       if (cols.size() == 2) {
         // neutralan dogadjaj
@@ -54,10 +58,13 @@ public class MatchParser {
         pointsMade = true;
       }
       playersLink = cols.get(1).select("a");
-      actions = ConvertHelper.returnActionType(awayTeamAction, pointsMade, playersLink, timestamp);
+
+      players = MatchEventHelper.returnPlayersIds(playersLink);
+      if (players != null)
+        actionType = MatchEventHelper.returnActionType(awayTeamAction, pointsMade, timestamp);
       scoreSummary = cols.get(3).text();
       matchEvent = MatchEvent.createForAwayTeam(scoreSummary, timestamp, points, awayTeamAction,
-          actions, quarter);
+          actionType, quarter, players);
     }
 
     return matchEvent;
