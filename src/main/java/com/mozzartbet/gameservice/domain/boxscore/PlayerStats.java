@@ -37,23 +37,20 @@ public class PlayerStats {
   private float timeLeft = 0;
   private String teamid;
 
-  public void teamSummary(int fieldGoals, int fieldGoalAttempts, int threePointFG,
-      int threePointFGAttempts, int freeThrows, int freeThrowAttempts, int offensiveRebounds,
-      int defensiveRebounds, int assists, int steals, int blocks, int turnovers,
-      int personalFouls) {
-    this.fieldGoals += fieldGoals;
-    this.fieldGoalAttempts += fieldGoalAttempts;
-    this.threePointFG += threePointFG;
-    this.threePointFGAttempts += threePointFGAttempts;
-    this.freeThrows += freeThrows;
-    this.freeThrowAttempts += freeThrowAttempts;
-    this.offensiveRebounds += offensiveRebounds;
-    this.defensiveRebounds += defensiveRebounds;
-    this.assists += assists;
-    this.steals += steals;
-    this.blocks += blocks;
-    this.turnovers += turnovers;
-    this.personalFouls += personalFouls;
+  public void teamSummary(PlayerStats ps) {
+    this.fieldGoals += ps.getFieldGoals();
+    this.fieldGoalAttempts += ps.getFieldGoalAttempts();
+    this.threePointFG += ps.getThreePointFG();
+    this.threePointFGAttempts += ps.getThreePointFGAttempts();
+    this.freeThrows += ps.getFreeThrows();
+    this.freeThrowAttempts += ps.getFreeThrowAttempts();
+    this.offensiveRebounds += ps.getOffensiveRebounds();
+    this.defensiveRebounds += ps.getDefensiveRebounds();
+    this.assists += ps.getAssists();
+    this.steals += ps.getSteals();
+    this.blocks += ps.getBlocks();
+    this.turnovers += ps.getTurnovers();
+    this.personalFouls += ps.getPersonalFouls();
   }
 
   public void add2point(boolean miss) {

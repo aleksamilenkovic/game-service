@@ -1,7 +1,9 @@
 package com.mozzartbet.gameservice.parser;
 
 import static org.junit.Assert.assertEquals;
+import java.util.List;
 import org.junit.Test;
+import com.google.common.collect.Multimap;
 import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.domain.Team;
 
@@ -25,12 +27,15 @@ public class TeamTests {
 
   }
 
-  /*
-   * @Test public void testNumberOfSeasons(int startingYear) { // metoda proverava broj sezona od
-   * odredjene godine // test je napravljen zbog provere koliko metodi
-   * readTeamsFromSpecificSeasonTillNow // treba vremena da se izvrsi i provera da nema exepction-a
-   * TeamParser jp = new TeamParser(); LinkedList<LinkedList<Team>> allSeasonTeams =
-   * jp.readTeamsFromSpecificSeasonTillNow(startingYear); int size = allSeasonTeams.size();
-   * assertEquals(size, 2020 - startingYear); }
-   */
+
+  // @Test
+  public void testNumberOfSeasons() { // metoda proverava broj sezona od
+    // odredjene godine // test je napravljen zbog provere koliko metodi
+    TeamParser tp = new TeamParser();
+    Multimap<Integer, List<Team>> teams = tp.readTeamsFromSpecificSeasonTillNow(2012);
+    // treba vremena da se izvrsi i provera da nema exepction-a
+    int size = teams.size();
+    assertEquals(size, 2020 - 2012);
+  }
+
 }

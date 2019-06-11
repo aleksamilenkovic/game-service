@@ -1,9 +1,9 @@
-package com.mozzartbet.gameservice.stats;
+package com.mozzartbet.gameservice.util;
 
 import java.util.Comparator;
 import java.util.Map;
 
-class ValueComparator implements Comparator<String> {
+public class ValueComparator implements Comparator<String> {
   Map<String, Integer> base;
 
   public ValueComparator(Map<String, Integer> base) {

@@ -58,7 +58,7 @@ public class StatsTests {
   public void testMatchStats() {
     MatchParser matchParse = new MatchParser();
     // +TeamParser teamParse = new TeamParser();
-    Match match = matchParse.returnMatch("201905200POR", "pbp201905200POR");
+    Match match = matchParse.returnMatch("201906100TOR", null);
     /*
      * Team team1 = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
      * "Portland Trail Blazers"); Team team2 =
@@ -68,7 +68,7 @@ public class StatsTests {
     MatchStats stats = new MatchStats();
     stats.calculateMatchStats(match, "");
 
-    assertEquals(stats.getHomeTeamStatsSummary().getPoints(), 117);
+    assertEquals(stats.getHomeTeamStatsSummary().getThreePointFG(), 8);
 
   }
 

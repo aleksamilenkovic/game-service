@@ -1,10 +1,13 @@
 package com.mozzartbet.gameservice.parser;
 
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.domain.Team;
 import com.mozzartbet.gameservice.exception.UrlException;
@@ -44,8 +47,8 @@ public class TeamParser {
 
   }
 
-  public LinkedList<Player> returnPlayers(Elements rows, String teamId) {
-    LinkedList<Player> listOfPlayers = new LinkedList<Player>();
+  public List<Player> returnPlayers(Elements rows, String teamId) {
+    List<Player> listOfPlayers = new ArrayList<Player>();
 
     for (int i = 1; i < rows.size(); i++) {
       Elements cols = rows.get(i).select("td");
@@ -78,9 +81,9 @@ public class TeamParser {
   }
 
 
-  public LinkedList<Team> readTeamsFromSeason(int seasonYear) {
+  public List<Team> readTeamsFromSeason(int seasonYear) {
     String url = "https://www.basketball-reference.com/leagues/NBA_" + seasonYear + ".html";
-    LinkedList<Team> teams = new LinkedList<Team>();
+    List<Team> teams = new ArrayList<Team>();
     Document doc;
     try {
       doc = JsoupHelper.connectToLivePage(url);
@@ -112,12 +115,12 @@ public class TeamParser {
     return teams;
   }
 
-  public LinkedList<LinkedList<Team>> readTeamsFromSpecificSeasonTillNow(int year) {
-    LinkedList<LinkedList<Team>> allTeams = new LinkedList<LinkedList<Team>>();
+  public Multimap<Integer, List<Team>> readTeamsFromSpecificSeasonTillNow(int year) {
+    Multimap<Integer, List<Team>> allTeams = ArrayListMultimap.create();
     do {
       System.out
           .println("**********************SEASON YEAR " + year + "****************************** ");
-      allTeams.add(readTeamsFromSeason(year));
+      allTeams.put(year, readTeamsFromSeason(year));
     } while (year++ < 2019);
     return allTeams;
   }

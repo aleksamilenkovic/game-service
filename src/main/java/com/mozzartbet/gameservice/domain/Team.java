@@ -1,6 +1,6 @@
 package com.mozzartbet.gameservice.domain;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 
@@ -12,7 +12,7 @@ public class Team {
 
   public Team() {
     teamName = "";
-    players = new LinkedList<Player>();
+    players = new ArrayList<Player>();
   }
 
 

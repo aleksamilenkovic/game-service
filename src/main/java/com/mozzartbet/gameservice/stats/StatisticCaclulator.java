@@ -38,22 +38,8 @@ public class StatisticCaclulator {
       // Map.Entry pair = (Map.Entry) it.next();
       PlayerStats stats = (PlayerStats) entry.getValue();
       stats.summary();
-
-      /// OVAJ IF ELSE KASNIJE PREBACITI U MATCH STATS DA IZRACUNA ZA TIM NA KRAJU DA NE BI ZA
-      /// SVAKOG IGRACA PROLAZIO
-      if (stats.getTeamid().equals(home))
-        homeTeam.teamSummary(stats.getFieldGoals(), stats.getFieldGoalAttempts(),
-            stats.getThreePointFG(), stats.getThreePointFGAttempts(), stats.getFreeThrows(),
-            stats.getFreeThrowAttempts(), stats.getOffensiveRebounds(),
-            stats.getDefensiveRebounds(), stats.getAssists(), stats.getSteals(), stats.getBlocks(),
-            stats.getTurnovers(), stats.getPersonalFouls());
-      else if (stats.getTeamid().equals(away))
-        awayTeam.teamSummary(stats.getFieldGoals(), stats.getFieldGoalAttempts(),
-            stats.getThreePointFG(), stats.getThreePointFGAttempts(), stats.getFreeThrows(),
-            stats.getFreeThrowAttempts(), stats.getOffensiveRebounds(),
-            stats.getDefensiveRebounds(), stats.getAssists(), stats.getSteals(), stats.getBlocks(),
-            stats.getTurnovers(), stats.getPersonalFouls());
-      // it.remove(); // avoids a ConcurrentModificationException
+      PlayerStats team = stats.getTeamid().equals(home) ? homeTeam : awayTeam;
+      team.teamSummary(stats);
     }
     homeTeam.summary();
     awayTeam.summary();

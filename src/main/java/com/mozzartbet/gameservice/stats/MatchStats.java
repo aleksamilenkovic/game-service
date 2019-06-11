@@ -11,6 +11,7 @@ import com.google.common.collect.Table;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.Quarter;
 import com.mozzartbet.gameservice.domain.boxscore.PlayerStats;
+import com.mozzartbet.gameservice.util.ValueComparator;
 import lombok.Data;
 
 @Data
