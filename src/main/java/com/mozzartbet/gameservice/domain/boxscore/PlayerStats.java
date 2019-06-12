@@ -4,8 +4,9 @@ import com.mozzartbet.gameservice.util.ConvertHelper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@AllArgsConstructor
+
 @Data
+@AllArgsConstructor
 public class PlayerStats {
   public PlayerStats(String playerId, String teamName) {
     this.playerId = playerId;
