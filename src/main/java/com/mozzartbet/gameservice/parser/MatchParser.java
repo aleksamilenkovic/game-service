@@ -12,10 +12,12 @@ import com.mozzartbet.gameservice.domain.Quarter;
 import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.exception.UrlException;
 import com.mozzartbet.gameservice.util.MatchEventHelper;
+import lombok.extern.slf4j.Slf4j;
 import com.mozzartbet.gameservice.util.ConvertHelper;
 import com.mozzartbet.gameservice.util.JsoupHelper;
 import com.mozzartbet.gameservice.util.LoadPage;
 
+@Slf4j
 public class MatchParser {
   String quarter = "1st Q";
 
@@ -77,6 +79,7 @@ public class MatchParser {
     Elements rows = doc.select("table#pbp tr");
     rows.remove(0);
     for (Element row : rows) {
+      log.info(row.text());
       if (row.select("th").size() > 0) {
         if (row.childNodeSize() == 3) {
           quarters.add(new Quarter(quarter, quarterEvents));

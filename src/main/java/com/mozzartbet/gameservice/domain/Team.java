@@ -14,18 +14,4 @@ public class Team {
     teamName = "";
     players = new ArrayList<Player>();
   }
-
-
-
-  @Override
-  public String toString() {
-    return "Team [teamName=" + teamName + ", players=" + players + "]";
-  }
-
-  public void showTeam() {
-    System.out.println("=====" + teamName + "=====");
-    for (Player p : players) {
-      System.out.println(p);
-    }
-  }
 }

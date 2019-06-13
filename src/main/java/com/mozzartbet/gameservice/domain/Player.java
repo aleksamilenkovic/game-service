@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Player {
   private final String player_id;
-  private final String team_id;
+  private String team_id;
   private String number;
   private String name;
   private String position;

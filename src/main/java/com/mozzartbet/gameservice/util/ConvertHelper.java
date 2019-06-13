@@ -14,7 +14,11 @@ public abstract class ConvertHelper {
   }
 
   public static String returnPlayerId(String link) {
-    return link != null ? link.substring(link.length() - 16, link.length() - 5) : null;
+    return link.length()>20 ? link.substring(link.length() - 16, link.length() - 5) : null;
+  }
+  public static String returnTeamId(String link,boolean local) {
+    return local?(link.substring(0, 3) + "/" + link.substring(4, link.length())).substring(5, link.length())
+        :link.substring(link.length() - 13, link.length() - 5);
   }
 
   public static double roundDecimal(double value, int places) {

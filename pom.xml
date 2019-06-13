@@ -20,6 +20,7 @@
 		<jsoup.version>1.12.1</jsoup.version>
 		<lombok.version>1.18.8</lombok.version>
 		<guava.version>27.1-jre</guava.version>
+		<slf4j-api.version>1.7.26</slf4j-api.version>
 	</properties>
 
 	<dependencies>
@@ -53,6 +54,10 @@
 		<version>${lombok.version}</version><!--$NO-MVN-MAN-VER$-->
 		<scope>provided</scope>
 	</dependency>
+	<dependency>
+	    <groupId>org.slf4j</groupId>
+	    <artifactId>slf4j-api</artifactId>
+	    </dependency>
 
 	</dependencies>
 
