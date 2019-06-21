@@ -5,20 +5,24 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.MatchEvent;
 import com.mozzartbet.gameservice.domain.MatchEventType;
 import com.mozzartbet.gameservice.domain.Quarter;
 import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.exception.UrlException;
-import com.mozzartbet.gameservice.util.MatchEventHelper;
-import lombok.extern.slf4j.Slf4j;
 import com.mozzartbet.gameservice.util.ConvertHelper;
 import com.mozzartbet.gameservice.util.JsoupHelper;
 import com.mozzartbet.gameservice.util.LoadPage;
+import com.mozzartbet.gameservice.util.MatchEventHelper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Service
 @Slf4j
-public class MatchParser {
+@RequiredArgsConstructor
+public class MatchParserBasketballRef {
   String quarter = "1st Q";
 
   public MatchEvent returnMatchEvent(Element row) {
@@ -181,8 +185,9 @@ public class MatchParser {
     Match match = null;
     Document doc = null;
     try {
-      doc = JsoupHelper.connectToLivePage("https://www.basketball-reference.com/leagues/NBA_" + year
-          + "_games-" + month.toLowerCase() + ".html");
+      doc = JsoupHelper.connectToLivePage(
+          String.format("https://www.basketball-reference.com/leagues/NBA_%d_games-%s.html", year,
+              month.toLowerCase()));
     } catch (UrlException e) {
       System.out.println(e);
       return matches;

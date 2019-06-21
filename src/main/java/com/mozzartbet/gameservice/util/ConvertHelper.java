@@ -2,6 +2,9 @@ package com.mozzartbet.gameservice.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 
 public abstract class ConvertHelper {
   public static int tryParseInt(String value) {
@@ -14,11 +17,12 @@ public abstract class ConvertHelper {
   }
 
   public static String returnPlayerId(String link) {
-    return link.length()>20 ? link.substring(link.length() - 16, link.length() - 5) : null;
+    return link.length() > 20 ? link.substring(link.length() - 16, link.length() - 5) : null;
   }
-  public static String returnTeamId(String link,boolean local) {
-    return local?(link.substring(0, 3) + "/" + link.substring(4, link.length())).substring(5, link.length())
-        :link.substring(link.length() - 13, link.length() - 5);
+
+  public static String returnTeamId(String link, boolean local) {
+    return local ? (link.substring(5, 8) + "/" + link.substring(8, link.length()))
+        : link.substring(link.length() - 13, link.length() - 5);
   }
 
   public static double roundDecimal(double value, int places) {
@@ -30,5 +34,12 @@ public abstract class ConvertHelper {
     return bd.doubleValue();
   }
 
+  public static LocalDateTime convertStringToLocalDate(String date) {
+    return LocalDateTime.parse(date,
+        new DateTimeFormatterBuilder().appendPattern("[uuuuMMddHHmmss][uuuuMMdd]")
+            .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+            .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
+            .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter());
+  }
 
 }

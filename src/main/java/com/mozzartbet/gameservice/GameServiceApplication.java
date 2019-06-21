@@ -4,9 +4,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import com.mozzartbet.gameservice.domain.Match;
-import com.mozzartbet.gameservice.parser.MatchParser;
-import com.mozzartbet.gameservice.stats.MatchStats;
 
 @SpringBootApplication
 public class GameServiceApplication implements ApplicationRunner {
@@ -19,10 +16,10 @@ public class GameServiceApplication implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) throws Exception {
     // TeamParser teamParse = new TeamParser();
-  //  MatchParser matchParse = new MatchParser();
+    // MatchParser matchParse = new MatchParser();
     // teamParse.readPlayers("https://www.basketball-reference.com/teams/ORL/2019.html");
 
-  //  Match match = matchParse.returnMatch("201905300TOR", null);// ,
+    // Match match = matchParse.returnMatch("201905300TOR", null);// ,
     // "Portland Trail Blazers at Golden State Warriors Play-By-Play, May 16, 2019 _
     // Basketball-Reference.com");
     /*
@@ -31,12 +28,12 @@ public class GameServiceApplication implements ApplicationRunner {
      * teamParse.returnTeam("https://www.basketball-reference.com/teams/GSW/2019.html",
      * "Golden State Warriors");
      */
-   
+
     // Season s = matchParse.returnSeasonMatches(2001);
     // s.setTeams(teamParse.readTeamsFromSeason(2001));
     // System.out.println(s);
-    //MatchStats matchStats = new MatchStats();
-  //  matchStats.calculateMatchStats(match, "rebound");
+    // MatchStats matchStats = new MatchStats();
+    // matchStats.calculateMatchStats(match, "rebound");
     /*
      * System.out.println(matchStats.getBestPlayersStats() + "\n");
      * System.out.println("All players stats\n" + matchStats.getPlayersStats() + "\n");

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mozzartbet.gameservice.mapper.PlayerMapper">
+	<!-- public long count(); -->
+	<select id="count" resultType="Long">
+		select count(*) from players
+	</select>
+	
+	<resultMap type="Player" id="PlayerMap">
+		<id column="id" property="id"/>
+		<result column="created_on" property="createdOn"/>
+        <result column="modified_on" property="modifiedOn"/>
+		<result column="player_id" property="playerId"/>
+        <result column="number" property="number"/>
+        <result column="name" property="name"/>
+        <result column="position" property="position"/>
+       	<result column="height" property="height"/>
+       	<result column="weight" property="weight"/>
+       	<result column="birthDate" property="birthDate"/>
+       	<result column="nationality" property="nationality"/>
+       	<result column="experience" property="experience"/>
+       	<result column="college" property="college"/>
+       	<association property="team" javaType="Team" >
+       	   <id column="id" property="id"/>
+	   	   <result column="team_id" property="teamId" />
+	   	   <result column="team_name" property="name"/>
+        </association>
+        <!-- u slucaju da field kod playera za tim bude klasa Team
+        association property="team" javaType="Team" >
+	   	   <id column="team_id" property="id" />
+	   	   <result column="team_name" property="name"/>
+        </association>
+        -->
+	</resultMap>
+	
+	<!-- public Player getById(String player_id); -->
+	<select id="getById" parameterType="String" resultMap="PlayerMap">
+		select 
+			p.*,
+			t.id id, t.team_id teamId, t.name name
+			from players p
+			inner join teams t on t.team_id=p.team_id
+			where p.player_id=#{playerId}
+	</select>
+	
+	<!-- public int save(Player player); -->
+	<insert id="save" parameterType="Player">
+		<selectKey keyProperty="id" resultType="long" order="BEFORE">
+			select sq_players.nextval from dual
+		</selectKey>
+		insert into 
+			players(id,player_id,team_id,created_on,modified_on,number,name,position,height,weight,birthDate,nationality,experience,college) 
+			values(#{id},#{playerId},#{team.teamId},current_timestamp,current_timestamp,#{number},#{name},#{position},#{height},#{weight},#{birthDate},#{nationality},#{experience},#{college})
+	</insert>
+	
+	<!-- public int update(Player player) -->
+	<update id="update" parameterType="Player">
+	   update players
+	   set
+	       <if test="{teamId}!=null">team_id=#{teamId,jdbcType=VARCHAR)</if>,
+	       number=#{number},
+	       name = #{name},
+	       height = #{height},
+	       weight = #{weight},
+	       experience = #{experience}
+	   where
+	       player_id = #{playerId}
+	</update>
+	
+	<!-- public int deleteById(@Param("id") Long id); -->
+	<delete id="deleteById" parameterType="long">
+		delete from players where id = #{id}
+	</delete>
+	
+	    <!-- public List<Player> getPlayersForTeam(@Param("teamId") Long teamId); -->
+	<select id="getPlayersForTeam" resultMap="PlayerMap">
+	     select 
+            p.*
+         from
+            players p
+                inner join teams t on t.team_id = p.team_id
+         where
+            t.team_id = #{teamId}
+         order by
+            p.id
+	</select>
+	
+</mapper>

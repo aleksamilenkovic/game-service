@@ -14,7 +14,7 @@ public class StatsTests {
 
   @Test
   public void testPlayerStats() {
-    MatchParser matchParse = new MatchParser();
+    MatchParserBasketballRef matchParse = new MatchParserBasketballRef();
     // TeamParser teamParse = new TeamParser();
     Match match = matchParse.returnMatch("201905160GSW", "pbp201905200POR");
     /*
@@ -33,7 +33,7 @@ public class StatsTests {
   @Test
   public void testTeamStats() {
     // TEST DA LI JE LILARD NA MECU DAO 23 POENA
-    MatchParser matchParse = new MatchParser();
+    MatchParserBasketballRef matchParse = new MatchParserBasketballRef();
     // TeamParser teamParse = new TeamParser();
     Match match = matchParse.returnMatch("201905160GSW", "pbp201905200POR");
     /*
@@ -56,7 +56,7 @@ public class StatsTests {
 
   @Test
   public void testMatchStats() {
-    MatchParser matchParse = new MatchParser();
+    MatchParserBasketballRef matchParse = new MatchParserBasketballRef();
     // +TeamParser teamParse = new TeamParser();
     Match match = matchParse.returnMatch("201906100TOR", null);
     /*

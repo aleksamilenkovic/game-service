@@ -21,6 +21,7 @@
 		<lombok.version>1.18.8</lombok.version>
 		<guava.version>27.1-jre</guava.version>
 		<slf4j-api.version>1.7.26</slf4j-api.version>
+		<mybatis-spring-boot-starter.version>2.0.1</mybatis-spring-boot-starter.version>
 	</properties>
 
 	<dependencies>
@@ -58,7 +59,15 @@
 	    <groupId>org.slf4j</groupId>
 	    <artifactId>slf4j-api</artifactId>
 	    </dependency>
-
+	<dependency>
+	    <groupId>com.h2database</groupId>
+	    <artifactId>h2</artifactId>
+	</dependency>
+	<dependency>
+    <groupId>org.mybatis.spring.boot</groupId>
+ 			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>${mybatis-spring-boot-starter.version}</version>
+</dependency>
 	</dependencies>
 
 	<build>

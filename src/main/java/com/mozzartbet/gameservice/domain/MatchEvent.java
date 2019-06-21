@@ -1,15 +1,26 @@
 package com.mozzartbet.gameservice.domain;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MatchEvent {
+@SuperBuilder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class MatchEvent implements BaseEntity {
+  @EqualsAndHashCode.Include
+  private Long id;
+
+  private LocalDateTime createdOn;
+  private LocalDateTime modifiedOn;
+  private String matchId;
   private String scoreSummary = "";
   private float timestamp;
   private MatchEventType eventType;
