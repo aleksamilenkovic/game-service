@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
+import org.jsoup.nodes.Element;
 
 public abstract class ConvertHelper {
   public static int tryParseInt(String value) {
@@ -17,12 +18,18 @@ public abstract class ConvertHelper {
   }
 
   public static String returnPlayerId(String link) {
-    return link.length() > 20 ? link.substring(link.length() - 16, link.length() - 5) : null;
+    return link.length() > 32 ? link.substring(45, link.length() - 5)
+        : link.substring(9, link.length() - 5);
   }
 
   public static String returnTeamId(String link, boolean local) {
     return local ? (link.substring(5, 8) + "/" + link.substring(8, link.length()))
         : link.substring(link.length() - 13, link.length() - 5);
+  }
+
+  public static String returnTeamAttrRefId(Element el) {
+    String href = el.select("a").attr("href");
+    return href.substring(7, href.length() - 5);
   }
 
   public static double roundDecimal(double value, int places) {
@@ -42,4 +49,9 @@ public abstract class ConvertHelper {
             .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter());
   }
 
+  public static LocalDateTime convertStringWithFullMonthToLocalDate(String[] dt) {
+    String dateString = dt[0] + " " + dt[1] + " " + dt[2] + " " + dt[3] + " " + dt[4];
+    return LocalDateTime.parse(dateString,
+        new DateTimeFormatterBuilder().appendPattern("h:mm a, MMMM d, uuuu").toFormatter());
+  }
 }

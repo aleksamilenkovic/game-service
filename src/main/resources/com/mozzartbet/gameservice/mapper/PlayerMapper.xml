@@ -3,16 +3,16 @@
 <mapper namespace="com.mozzartbet.gameservice.mapper.PlayerMapper">
 	<!-- public long count(); -->
 	<select id="count" resultType="Long">
-		select count(*) from players
+		select count(*) from basketball_players
 	</select>
 	
 	<resultMap type="Player" id="PlayerMap">
 		<id column="id" property="id"/>
+		<result column="player_id" property="playerId"/>
 		<result column="created_on" property="createdOn"/>
         <result column="modified_on" property="modifiedOn"/>
-		<result column="player_id" property="playerId"/>
-        <result column="number" property="number"/>
-        <result column="name" property="name"/>
+        <result column="player_number" property="number"/>
+        <result column="player_name" property="name"/>
         <result column="position" property="position"/>
        	<result column="height" property="height"/>
        	<result column="weight" property="weight"/>
@@ -21,9 +21,9 @@
        	<result column="experience" property="experience"/>
        	<result column="college" property="college"/>
        	<association property="team" javaType="Team" >
-       	   <id column="id" property="id"/>
+       		<id column="team_pk" property="id"/>
 	   	   <result column="team_id" property="teamId" />
-	   	   <result column="team_name" property="name"/>
+	   	   <result column="name" property="name"/>
         </association>
         <!-- u slucaju da field kod playera za tim bude klasa Team
         association property="team" javaType="Team" >
@@ -33,33 +33,41 @@
         -->
 	</resultMap>
 	
-	<!-- public Player getById(String player_id); -->
-	<select id="getById" parameterType="String" resultMap="PlayerMap">
-		select 
-			p.*,
-			t.id id, t.team_id teamId, t.name name
-			from players p
-			inner join teams t on t.team_id=p.team_id
-			where p.player_id=#{playerId}
-	</select>
 	
-	<!-- public int save(Player player); -->
-	<insert id="save" parameterType="Player">
+	<select id="getById" parameterType="long" resultMap="PlayerMap">
+	   select
+	       p.*,
+	       t.id as team_pk,t.team_id as team_id,t.name as name
+	       from players p
+	       inner join basketball_teams t on t.id=p.team_pk
+	       where p.id=#{id}
+	</select>
+	<!-- public Player getById(String player_id); -->
+    <select id="getByPlayerIdAndTeamId" parameterType="String" resultMap="PlayerMap">
+        select 
+            p.*,
+            t.id as team_pk,t.team_id as team_id,t.name as name
+            from basketball_players p
+            inner join basketball_teams t on t.id=p.team_pk
+            where p.player_id=#{playerId} and p.team_id=#{teamId}
+    </select>
+    
+	<!-- public int insert(Player player); -->
+	<insert id="insert" parameterType="Player">
 		<selectKey keyProperty="id" resultType="long" order="BEFORE">
 			select sq_players.nextval from dual
 		</selectKey>
-		insert into 
-			players(id,player_id,team_id,created_on,modified_on,number,name,position,height,weight,birthDate,nationality,experience,college) 
-			values(#{id},#{playerId},#{team.teamId},current_timestamp,current_timestamp,#{number},#{name},#{position},#{height},#{weight},#{birthDate},#{nationality},#{experience},#{college})
+		insert into basketball_players (id,player_id,team_id,team_pk,created_on,modified_on,player_number,player_name,position,height,weight,birthDate,nationality,experience,college) 
+			values (#{id},#{playerId,jdbcType=VARCHAR},#{team.teamId},#{team.id},current_timestamp,current_timestamp,#{number},#{name,jdbcType=VARCHAR},#{position,jdbcType=VARCHAR},#{height,jdbcType=VARCHAR},#{weight,jdbcType=VARCHAR},#{birthDate},#{nationality,jdbcType=VARCHAR},#{experience,jdbcType=INTEGER},#{college,jdbcType=VARCHAR})
 	</insert>
 	
 	<!-- public int update(Player player) -->
 	<update id="update" parameterType="Player">
-	   update players
+	   update basketball_players
 	   set
 	       <if test="{teamId}!=null">team_id=#{teamId,jdbcType=VARCHAR)</if>,
-	       number=#{number},
-	       name = #{name},
+	       player_number=#{number},
+	       player_name = #{name},
 	       height = #{height},
 	       weight = #{weight},
 	       experience = #{experience}
@@ -69,20 +77,46 @@
 	
 	<!-- public int deleteById(@Param("id") Long id); -->
 	<delete id="deleteById" parameterType="long">
-		delete from players where id = #{id}
+		delete from basketball_players where id = #{id}
 	</delete>
 	
 	    <!-- public List<Player> getPlayersForTeam(@Param("teamId") Long teamId); -->
 	<select id="getPlayersForTeam" resultMap="PlayerMap">
 	     select 
-            p.*
+            p.*,
+            t.id as team_pk,t.team_id as team_id,t.name as name
          from
-            players p
-                inner join teams t on t.team_id = p.team_id
+            basketball_players p
+                inner join basketball_teams t on t.id = p.team_pk
          where
             t.team_id = #{teamId}
          order by
             p.id
 	</select>
 	
+	
+	<resultMap type="Team" id="TeamWithPlayersMap">
+        <id column="id" property="id" />
+        <result column="created_on" property="createdOn"/>
+        <result column="modified_on" property="modifiedOn"/>
+        <result column="name" property="name"/>
+        <result column="team_id" property="teamId"/>
+        <collection property="players" ofType="Player" resultMap="PlayerMap" columnPrefix="p_"/>
+    </resultMap>
+	
+		<!-- public Team getTeamWithPlayers(@Param("teamId")String teamId); -->
+	<select id="getTeamWithPlayers" parameterType="String" resultMap="TeamWithPlayersMap">
+	      select 
+            t.*,
+            p.id p_id,p.player_id p_player_id,p.created_on p_created_on,p.modified_on p_modified_on,p.player_number p_player_number,p.player_name p_player_name,
+            p.height p_height,p.weight p_weight, p.birthDate p_birthDate, p.nationality p_nationality, p.experience p_experience,p.college p_college ,
+            t.id p_team_pk,t.team_id p_team_id , t.name p_team_name
+        
+         from
+            basketball_teams t
+              inner join basketball_players p on (p.team_pk=t.id)
+         where
+            t.team_id = #{teamId}
+        
+	</select>
 </mapper>

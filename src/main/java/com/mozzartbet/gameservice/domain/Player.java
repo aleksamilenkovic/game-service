@@ -15,10 +15,9 @@ import lombok.experimental.SuperBuilder;
 public class Player implements BaseEntity {
   @EqualsAndHashCode.Include
   private Long id;
-  private String playerId;
-  private Team team;
   private LocalDateTime createdOn;
   private LocalDateTime modifiedOn;
+  private String playerId;
   private String number;
   private String name;
   private String position;
@@ -28,7 +27,6 @@ public class Player implements BaseEntity {
   private String nationality;
   private int experience;
   private String college;
-
-
+  private Team team;
 
 }

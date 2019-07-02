@@ -3,24 +3,47 @@
 <mapper namespace="com.mozzartbet.gameservice.mapper.MatchEventMapper">
 	<!-- public long count(); -->
 	<select id="count" resultType="Long">
-		select count(*) from events
+		select count(*) from basketball_events
 	</select>
 
 	<resultMap type="MatchEvent" id="MatchEventMap">
 			<id column="id" property="id"/>
 			<result column="created_on" property="createdOn"/>
 			<result column="modified_on" property="modifiedOn"/>
-			<result column="match_id" property="matchId"/>
 			<result column="score_summary" property="scoreSummary"/>
-			<result column="event_time" property="timestamp"/>
+			<result column="event_time" property="eventTime"/>
 			<result column="event_type" property="eventType"/>
 			<result column="home_team_action" property="homeTeamAction"/>
 			<result column="away_team_action" property="awayTeamAction"/>
 			<result column="points_made" property="pointsMade"/>
 			<result column="neutral_action" property="neutralAction"/>
-			<result column="quarter" property="quarter"/>
-			<result column="first_player_id" property="firstPlayerId"/>
-			<result column="second_player_id" property="secondPlayerId" />
+			<association property="quarter" javaType="Quarter">
+			 <result column="quarter_id" property="id"/>
+			 <result column="quarter_name" property="name"/>
+			 <association property="match" javaType="Match">
+			     <result column="match_id" property="matchId"/>
+			 </association>
+			</association>
+			<association property="firstPlayer" javaType="Player">
+			     <result column="first_id" property="id"/>
+			     <result column="first_player_id" property="playerId"/>
+			     <result column="first_player_name" property="name"/>
+			     <association property="team" javaType="Team">
+			         <result column="first_player_t_id" property="id"/>
+                    <result column="first_player_team_id" property="teamId"/>
+                    <result column="first_team_name" property="name"/>
+			     </association>
+			</association>
+			<association property="secondPlayer" javaType="Player">
+                 <result column="second_id" property="id"/>
+                 <result column="second_player_id" property="playerId"/>
+                 <result column="second_player_name" property="name"/>
+                 <association property="team" javaType="Team">
+                     <result column="second_player_t_id" property="id"/>
+                    <result column="second_player_team_id" property="teamId"/>
+                    <result column="second_team_name" property="name"/>
+                 </association>
+            </association>
 			
 	</resultMap>
 	
@@ -28,31 +51,31 @@
 	<select id="getById" parameterType="long" resultMap="MatchEventMap">
 		select 
 			e.*
-			from events e
+			from basketball_events e
 			where e.id=#{id}
 	</select>
 
-	<!-- public int save(MatchEvent); -->
-	<insert id="save" parameterType="MatchEvent">
+	<!-- public int insert(MatchEvent); -->
+	<insert id="insert" parameterType="MatchEvent">
 		<selectKey keyProperty="id" resultType="long" order="BEFORE">
 			select sq_events.nextval from dual
 		</selectKey>
-		insert into events
+		insert into basketball_events
 			(id,created_on,modified_on,match_id,score_summary,event_time
 			,event_type,home_team_action,away_team_action,points_made,neutral_action
-			,quarter,first_player_id,second_player_id)
+			,quarter_id,quarter_name<if test="firstPlayer!=null">,first_player_id</if><if test="secondPlayer!=null">,second_player_id</if><if test="firstPlayer!=null">,first_player_team_id</if><if test="secondPlayer!=null">,second_player_team_id</if>)
 			values(
-			#{id},current_timestamp,current_timestamp,#{matchId},#{scoreSummary},#{timestamp},
-			#{eventType},#{homeTeamAction},#{awayTeamAction},#{pointsMade},#{neutralAction}
-			,#{quarter},#{firstPlayerId},#{secondPlayerId})
+			#{id},current_timestamp,current_timestamp,#{quarter.match.matchId,jdbcType=VARCHAR},#{scoreSummary,jdbcType=VARCHAR },#{eventTime,jdbcType=FLOAT},
+			#{eventType,jdbcType=VARCHAR},#{homeTeamAction,jdbcType=VARCHAR},#{awayTeamAction,jdbcType=VARCHAR},#{pointsMade,jdbcType=INTEGER},#{neutralAction,jdbcType=VARCHAR}
+			,#{quarter.id,jdbcType=INTEGER},#{quarter.name}<if test="firstPlayer!=null">,#{firstPlayer.playerId,jdbcType=VARCHAR}</if><if test="secondPlayer!=null">,#{secondPlayer.playerId,jdbcType=VARCHAR}</if><if test="firstPlayer!=null">,#{firstPlayer.team.teamId}</if><if test="secondPlayer!=null">,#{secondPlayer.team.teamId}</if>)
 	</insert>
 
 	<!-- public int update(MatchEvent event) -->
 	<update id="update" parameterType="MatchEvent">
-		update events
+		update basketball_events
 			set <if test="{matchId}!=null">match_id=#{matchId,jdbcType=VARCHAR}</if>,
 				score_summary=#{scoreSummary},
-				event_time=#{timestamp},
+				event_time=#{eventTime},
 				points_made=#{pointsMade},
 				first_player_id=#{firstPlayerId},
 				second_player_id=#{secondPlayerId}
@@ -60,6 +83,6 @@
 	
 	<!-- public int deleteById(@Param("id") Long id); -->
 	<delete id="deleteById" parameterType="long">
-		delete from events where id = #{id}
+		delete from basketball_events where id = #{id}
 	</delete>
 </mapper>

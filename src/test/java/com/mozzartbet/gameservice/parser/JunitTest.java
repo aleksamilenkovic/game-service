@@ -13,7 +13,7 @@ public class JunitTest {
   public void testMatchPbpFirstRow(String matchID, String fileName) {
     MatchParserBasketballRef jmp = new MatchParserBasketballRef();
     Match match = jmp.returnMatch(matchID, fileName);
-    assertEquals(match.getQuarters().get(0).getMatchEvents().get(0).getTimestamp(), "12:00.0");
+    assertEquals(match.getQuarters().get(0).getMatchEvents().get(0).getEventTime(), "12:00.0");
   }
 
 

@@ -13,8 +13,8 @@ public class TeamTests extends GameServiceApplicationTests {
   @Test
   public void testNumberOfPlayers() {
     TeamParserBasketballRef jp = new TeamParserBasketballRef();
-    Team tm = jp.returnTeamLive("https://www.basketball-reference.com/teams/TOR/2019.html");
-    assertEquals(16, tm.getPlayers().size());
+    Team tm = jp.returnTeamLive("https://www.basketball-reference.com/teams/BOS/2017.html");
+    assertEquals(15, tm.getPlayers().size());
   }
 
   @Test

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mozzartbet.gameservice.mapper.PlayerStatsMapper">
+    <!-- public long count(); -->
+    <select id="count" resultType="Long">
+        select count(*) from basketball_player_stats
+    </select>
+    
+    <resultMap type="PlayerStats" id="PlayerStatsMap">
+        <id column="id" property="id"/>
+        <result column="created_on" property="createdOn"/>
+        <result column="modified_on" property="modifiedOn"/>
+        <result column="fieldgoals" property="fieldGoals"/>
+        <result column="fieldgoal_attempts" property="fieldGoalAttempts"/>
+        <result column="fieldgoal_percentage" property="fieldGoalPercentage"/>
+        <result column="threepoint_fg" property="threePointFG"/>
+        <result column="threepoint_fg_attempts" property="threePointFGAttempts"/>
+        <result column="threepoint_fg_percentage" property="threePointFGPercentage"/>
+        <result column="freethrows" property="freeThrows"/>
+        <result column="freethrow_attempts" property="freeThrowAttempts"/>
+        <result column="freethrow_percentage" property="freeThrowPercentage"/>
+        <result column="offensive_rebounds" property="offensiveRebounds"/>
+        <result column="defensive_rebounds" property="defensiveRebounds"/>
+        <result column="total_rebounds" property="totalRebounds"/>
+        <result column="assists" property="assists"/>
+        <result column="steals" property="steals"/>
+        <result column="blocks" property="blocks"/>
+        <result column="turnovers" property="turnovers"/>
+        <result column="personal_fouls" property="modifiedOn"/>
+        <result column="points" property="points"/>
+        <association property="match" javaType="Match" >
+            <id column="m_id" property="id"/>
+           <result column="match_id" property="matchId" />
+           <result column="season_year" property="seasonYear"/>
+        </association>
+        <association property="team" javaType="Team" >
+            <id column="t_id" property="id"/>
+           <result column="team_id" property="teamId" />
+           <result column="team_name" property="name"/>
+        </association>
+        <association property="player" javaType="Player">
+              <id column="p_id" property="id"/>
+              <result column="player_id" property="playerId"/>
+              <result column="player_name" property="name"/>
+        </association>
+    </resultMap>
+    
+    <select id="getById" parameterType="long" resultMap="PlayerMap">
+       select
+           ps.*,
+           m.id as m_id,m.match_id,m.season_year
+           t.id as t_id,t.team_id,t.name as team_name
+           from basketball_player_stats ps
+           inner join basketball_matches m on m.match_id=ps.match_id
+           inner join basketball_teams t on t.team_id=ps.team_id
+           where ps.id=#{id}
+    </select>
+    
+    <select id="getByMatchIdAndPlayerId" parameterType="String" resultMap="PlayerMap">
+       select
+           ps.*,
+           m.id as m_id,m.match_id,m.season_year
+           t.id as t_id,t.team_id,t.name as team_name
+           from basketball_player_stats ps
+           inner join basketball_matches m on m.match_id=ps.match_id
+           inner join basketball_teams t on t.team_id=ps.team_id
+           where ps.player_id=#{playerId} and ps.match_id=#{matchId}
+    </select>
+    
+    <!-- public int insert(PlayerStats playerStats); -->
+    <insert id="insert" parameterType="PlayerStats">
+        <selectKey keyProperty="id" resultType="long" order="BEFORE">
+            select sq_players.nextval from dual
+        </selectKey>
+        insert into basketball_player_stats (id,created_on,modified_on<if test="player!=null">,player_id</if><if test="team!=null">,team_id,match_id</if>,fieldgoals,fieldgoal_attempts,fieldgoal_percentage,threepoint_fg,threepoint_fg_attempts,threepoint_fg_percentage,freethrows,freethrow_attempts,freethrow_percentage,offensive_rebounds,defensive_rebounds,total_rebounds,assists,steals,blocks,turnovers,personal_fouls,points) 
+            values (#{id},current_timestamp,current_timestamp<if test="player!=null">,#{player.playerId,jdbcType=VARCHAR}</if><if test="team!=null">,#{team.teamId}</if>,#{fieldGoals},#{fieldGoalAttempts},#{fieldGoalPercentage},#{threePointFG},#{threePointFGAttempts},#{threePointFGPercentage},#{freeThrows},#{freeThrowAttempts},#{freeThrowPercentage},#{offensiveRebounds},#{defensiveRebounds},#{totalRebounds},#{assists},#{steals},#{blocks},#{turnovers},#{personalFouls},#{points})
+    </insert>
+    
+     <!-- public int update(PlayerStats playerStats); -->
+    <update id="update" parameterType="PlayerStats">
+        UPDATE basketball_player_stats 
+               set  <if test="{team}!=null">team_id=#{team.teamId,jdbcType=VARCHAR}</if>,
+                    <if test="{match}!=null">match_id=#{match.matchId,jdbcType=VARCHAR}</if>,
+                    <if test="{player}!=null">player_id=#{player.playerId,jdbcType=VARCHAR}</if>,
+                    modified_on=current_timestamp,
+                    points=#{points}
+               where player_id=#{player.playerId} and match_id=#{match.matchId}
+    </update>
+    
+     <!-- public int deleteById(@Param("id") Long id); -->
+    <delete id="deleteById" parameterType="long">
+        delete from basketball_player_stats where id = #{id}
+    </delete>
+    
+    
+</mapper>

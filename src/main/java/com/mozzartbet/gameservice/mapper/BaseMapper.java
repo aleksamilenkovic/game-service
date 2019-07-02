@@ -3,9 +3,9 @@ package com.mozzartbet.gameservice.mapper;
 public interface BaseMapper<Entity> {
   public long count();
 
-  public Entity getById(String id);
+  public Entity getById(Long id);
 
-  public int save(Entity entity);
+  public int insert(Entity entity);
 
   public int update(Entity entity);
 

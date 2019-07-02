@@ -1,19 +1,30 @@
 package com.mozzartbet.gameservice.domain.boxscore;
 
+import java.time.LocalDateTime;
+import com.mozzartbet.gameservice.domain.Match;
+import com.mozzartbet.gameservice.domain.Player;
+import com.mozzartbet.gameservice.domain.Team;
 import com.mozzartbet.gameservice.util.ConvertHelper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 public class PlayerStats {
-  public PlayerStats(String playerId, String teamName) {
-    this.playerId = playerId;
-    this.teamid = teamName;
+  public PlayerStats(String playerid, Team team, Match match) {
+    this.player = playerid == null ? null : Player.builder().playerId(playerid).team(team).build();
+    this.team = team;
+    this.match = match;
   }
 
-  private String playerId;
+  @EqualsAndHashCode.Include
+  private Long id;
+  private LocalDateTime createdOn;
+  private LocalDateTime modifiedOn;
+  private Player player;
   private int fieldGoals = 0;
   private int fieldGoalAttempts = 0;
   private double fieldGoalPercentage = 0;
@@ -36,7 +47,8 @@ public class PlayerStats {
   private float minutesPlayed = 0;
   private float timeEntered = 12;
   private float timeLeft = 0;
-  private String teamid;
+  private Match match;
+  private Team team;
 
   public void teamSummary(PlayerStats ps) {
     this.fieldGoals += ps.getFieldGoals();
@@ -138,8 +150,8 @@ public class PlayerStats {
 
   @Override
   public String toString() {
-    return didNotPlay() ? playerId + ":  " + "---------\t\tDID NOT PLAY\t\t--------"
-        : playerId + "   |  " + fieldGoals + " |  " + fieldGoalAttempts + " |" + fieldGoalPercentage
+    return didNotPlay() ? player + ":  " + "---------\t\tDID NOT PLAY\t\t--------"
+        : player + "   |  " + fieldGoals + " |  " + fieldGoalAttempts + " |" + fieldGoalPercentage
             + "| " + threePointFG + " | " + threePointFGAttempts + "  |" + threePointFGPercentage
             + "  | " + freeThrows + " | " + freeThrowAttempts + "  |" + freeThrowPercentage + "| "
             + offensiveRebounds + " | " + defensiveRebounds + " | " + totalRebounds + " | "

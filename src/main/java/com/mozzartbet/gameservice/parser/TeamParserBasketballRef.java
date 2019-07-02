@@ -39,9 +39,10 @@ public class TeamParserBasketballRef implements TeamParser {
       log.info(String.format("Parsing the team with url: %s", pageUrl));
       String teamId = ConvertHelper.returnTeamId(pageUrl, local),
           teamName = doc.select("[itemprop=name]").get(2).text();
+      int seasonYear = ConvertHelper.tryParseInt(teamId.substring(4));
       Elements rows = doc.select("table#roster tr");
-      team = Team.builder().players((new PlayerParser()).returnPlayers(rows, teamId)).name(teamName)
-          .teamId(teamId).build();
+      team = Team.builder().name(teamName).teamId(teamId).seasonYear(seasonYear).build();
+      team.setPlayers((new PlayerParser()).returnPlayers(rows, team));
       log.info(String.format("Finished parsing the team: %s", teamName));
     } catch (UrlException e) {
       log.error(String.format("Error with returning the team with url:%s\n", pageUrl));

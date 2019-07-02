@@ -20,52 +20,54 @@ public class MatchEvent implements BaseEntity {
 
   private LocalDateTime createdOn;
   private LocalDateTime modifiedOn;
-  private String matchId;
+  private Quarter quarter;
   private String scoreSummary = "";
-  private float timestamp;
+  private float eventTime;
   private MatchEventType eventType;
   private String homeTeamAction = "";
   private String awayTeamAction = "";
   private int pointsMade = 0;
   private String neutralAction = "";
-  private String quarter;
-  private String firstPlayerId = null;
-  private String secondPlayerId = null;
+  private Player firstPlayer;
+  private Player secondPlayer;
 
-  public MatchEvent(String neutralAction, float timestamp, String quarter) {
+  public MatchEvent(String neutralAction, float timestamp, Quarter quarter) {
     this.neutralAction = neutralAction;
-    this.timestamp = timestamp;
+    this.eventTime = timestamp;
     this.quarter = quarter;
+    this.quarter = quarter;
+    eventType = null;
   }// konstruktor za neutralnu akciju (jump ball, start/end of quarter, timeout
 
 
   public static MatchEvent createForHomeTeam(String scoreSummary, float timestamp, int pointsMade,
-      String action, MatchEventType type, String quarter, String players[]) {
-    return new MatchEvent(timestamp, scoreSummary, pointsMade, action, type, quarter, true,
-        players);
+      String action, MatchEventType type, Player players[], Quarter quarter) {
+    return new MatchEvent(timestamp, scoreSummary, pointsMade, action, type, true, players,
+        quarter);
   }
 
   public static MatchEvent createForAwayTeam(String scoreSummary, float timestamp, int pointsMade,
-      String action, MatchEventType type, String quarter, String players[]) {
-    return new MatchEvent(timestamp, scoreSummary, pointsMade, action, type, quarter, false,
-        players);
+      String action, MatchEventType type, Player players[], Quarter quarter) {
+    return new MatchEvent(timestamp, scoreSummary, pointsMade, action, type, false, players,
+        quarter);
   }
 
   // konstruktor koji generise MatchEvent u zavisnosti da li je away ili home team napravio akciju
   private MatchEvent(float timestamp, String scoreSummary, int pointsMade, String action,
-      MatchEventType type, String quarter, boolean homeTeam, String players[]) {
+      MatchEventType type, boolean homeTeam, Player players[], Quarter quarter) {
     // boolean proverava da li je home ili away team uradio nesto
     this.homeTeamAction =
         homeTeam ? setHomeAction(action, pointsMade) : setAwayAction(action, pointsMade);
-    this.timestamp = timestamp;
+    this.eventTime = timestamp;
     this.scoreSummary = scoreSummary;
     if (players != null) {
-      firstPlayerId = players[0];
-      secondPlayerId = players[1];
+      firstPlayer = players[0];
+      secondPlayer = players[1];
     }
     // String result[] = scoreSummary.split("-");
     // resultHomeLead = Integer.parseInt(result[0]) - Integer.parseInt(result[1]);
     this.eventType = type;
+    this.quarter = quarter;
     this.quarter = quarter;
   }
 

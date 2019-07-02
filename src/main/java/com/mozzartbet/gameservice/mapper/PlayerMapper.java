@@ -14,7 +14,11 @@ public interface PlayerMapper extends BaseMapper<Player> {
   // @Select("select id, playerId, teamId, created_on createdOn, modified_on modifiedOn,
   // number,name,position,height,weight"
   // + ",birthDate,nationality,expirience,college from players where playerId = #{playerId}")
-  public Player getById(@Param("playerId") String playerId);
+  public Player getById(@Param("id") Long id);
+
+
+  public Player getByPlayerIdAndTeamId(@Param("playerId") String playerId,
+      @Param("teamId") String teamId);
 
   // @Insert("insert into players(id, playerId, teamId, created_on , modified_on ,
   // number,name,position,height,weight,birthDate,nationality,expirience,college) "
@@ -23,7 +27,7 @@ public interface PlayerMapper extends BaseMapper<Player> {
   // #{college})")
   // @SelectKey(before = true, statement = "select sq_teams.nextval from dual", keyProperty = "id",
   // resultType = Long.class)
-  public int save(Player player);
+  public int insert(Player player);
 
   // @Update("update players set playerId=#{teamName},
   // teamId=#{teamId},name=#{name},number=#{number},position=#{position},height=#{height},

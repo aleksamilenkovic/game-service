@@ -1,5 +1,6 @@
 package com.mozzartbet.gameservice.parser;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.nodes.Document;
@@ -9,8 +10,10 @@ import org.springframework.stereotype.Service;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.MatchEvent;
 import com.mozzartbet.gameservice.domain.MatchEventType;
+import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.domain.Quarter;
 import com.mozzartbet.gameservice.domain.Season;
+import com.mozzartbet.gameservice.domain.Team;
 import com.mozzartbet.gameservice.exception.UrlException;
 import com.mozzartbet.gameservice.util.ConvertHelper;
 import com.mozzartbet.gameservice.util.JsoupHelper;
@@ -25,12 +28,12 @@ import lombok.extern.slf4j.Slf4j;
 public class MatchParserBasketballRef {
   String quarter = "1st Q";
 
-  public MatchEvent returnMatchEvent(Element row) {
+  public MatchEvent returnMatchEvent(Element row, Quarter quarter) {
     MatchEvent matchEvent = null;
     Elements cols = row.select("td"), playersLink;
     String time = cols.get(0).text(), awayTeamAction = cols.get(1).text(), scoreSummary,
         homeTeamAction, p;
-    String players[] = new String[2];
+    Player players[] = new Player[2];
     float timestamp = Float.parseFloat(time.substring(0, time.length() - 2).replace(':', '.'));
     int points = 0;
     boolean pointsMade = false;
@@ -45,12 +48,12 @@ public class MatchParserBasketballRef {
       }
       homeTeamAction = cols.get(5).text();
       playersLink = cols.get(5).select("a");
-      players = MatchEventHelper.returnPlayersIds(playersLink);
+      players = MatchEventHelper.returnPlayers(playersLink, quarter.getMatch());
       if (players != null)
         actionType = MatchEventHelper.returnActionType(homeTeamAction, pointsMade, timestamp);
       scoreSummary = cols.get(3).text();
       matchEvent = MatchEvent.createForHomeTeam(scoreSummary, timestamp, points, homeTeamAction,
-          actionType, quarter, players);
+          actionType, players, quarter);
     } else {
       if (cols.size() == 2) {
         // neutralan dogadjaj
@@ -65,37 +68,43 @@ public class MatchParserBasketballRef {
       }
       playersLink = cols.get(1).select("a");
 
-      players = MatchEventHelper.returnPlayersIds(playersLink);
+      players = MatchEventHelper.returnPlayers(playersLink, quarter.getMatch());
       if (players != null)
         actionType = MatchEventHelper.returnActionType(awayTeamAction, pointsMade, timestamp);
       scoreSummary = cols.get(3).text();
       matchEvent = MatchEvent.createForAwayTeam(scoreSummary, timestamp, points, awayTeamAction,
-          actionType, quarter, players);
+          actionType, players, quarter);
     }
 
     return matchEvent;
   }
 
-  public List<Quarter> returnMatchEvents(Document doc) {
+  public List<Quarter> returnMatchEvents(Document doc, Match match) {
     List<Quarter> quarters = new ArrayList<Quarter>();
-    List<MatchEvent> quarterEvents = new ArrayList<MatchEvent>();;
+    List<MatchEvent> quarterEvents = new ArrayList<MatchEvent>();
     // int i = -1;
     Elements rows = doc.select("table#pbp tr");
     rows.remove(0);
+    Quarter q = new Quarter(quarter, quarterEvents, match);
     for (Element row : rows) {
       log.info(row.text());
       if (row.select("th").size() > 0) {
         if (row.childNodeSize() == 3) {
-          quarters.add(new Quarter(quarter, quarterEvents));
+          if (!quarter.equals("1st Q"))
+            q = new Quarter(quarter, quarterEvents, match);
+          quarters.add(q);
+          q.calculateResult();
           quarterEvents = new ArrayList<MatchEvent>();
           quarter = row.text();
         }
         continue;
       }
       // System.out.println(returnMatchEvent(row));
-      quarterEvents.add(returnMatchEvent(row));
+      quarterEvents.add(returnMatchEvent(row, q));
     }
-    quarters.add(new Quarter(quarter, quarterEvents));
+    Quarter lastQuarter = new Quarter(quarter, quarterEvents, match);
+    lastQuarter.calculateResult();
+    quarters.add(lastQuarter);
     quarter = "1st Q";
     // setMatchEvents(matchEvents);
     return quarters;
@@ -128,10 +137,8 @@ public class MatchParserBasketballRef {
     Match match = null;
     Document doc = null;
     String url = "https://www.basketball-reference.com/boxscores/pbp/" + matchId + ".html";
+    int matchYear = ConvertHelper.tryParseInt(matchId.substring(0, 4));
     try {
-      int matchYear = ConvertHelper.tryParseInt(matchId.substring(0, 4));
-      if (matchYear < 2001)
-        return returnOlderMatch(matchId, fileName);
       doc = fileName == null ? JsoupHelper.connectToLivePage(url)
           : JsoupHelper.connectToLocalPage(fileName);
     } catch (UrlException e) {
@@ -141,18 +148,27 @@ public class MatchParserBasketballRef {
 
     Element scorebox = doc.getElementsByClass("scorebox").first();
     Elements teamNamesDiv = scorebox.select("strong"), teamPoints = scorebox.select("div.score");
-    String awayTeam = teamNamesDiv.get(0).text(), homeTeam = teamNamesDiv.get(1).text(),
-        pointsAwayTeam = teamPoints.select("div").get(0).text(),
+    String pointsAwayTeam = teamPoints.select("div").get(0).text(),
         pointsHomeTeam = teamPoints.get(1).text();
     String[] dt = doc.select("div.scorebox_meta").select("div").first().text().split(" ");
-    String date = dt[2] + dt[3] + dt[4];
-    List<Quarter> quarters = returnMatchEvents(doc);
-    match = new Match(date, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, quarters, matchId);
+    LocalDateTime datetime = ConvertHelper.convertStringWithFullMonthToLocalDate(dt);
+    Team awayTeam =
+        Team.builder().name(teamNamesDiv.get(0).text())
+            .teamId(ConvertHelper.returnTeamAttrRefId(teamNamesDiv.get(0))).build(),
+        homeTeam = Team.builder().name(teamNamesDiv.get(1).text())
+            .teamId(ConvertHelper.returnTeamAttrRefId(teamNamesDiv.get(1))).build();
+    match = new Match(datetime, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, null, matchId);
     returnPlayerIds(matchId, match.getHomePlayersID(), match.getAwayPlayersID());
+    List<Quarter> quarters = matchYear >= 2001 ? returnMatchEvents(doc, match) : null;
+    match.setQuarters(quarters);
+
+
+    if (matchYear >= 2001)
+      match.calculateStats();
     return match;
   }
 
-
+  /// nepotrebna funkcija
   public Match returnOlderMatch(String matchId, String fileName) {
     Match match = null;
     Document doc = null;
@@ -168,13 +184,19 @@ public class MatchParserBasketballRef {
     }
     Element scorebox = doc.getElementsByClass("scorebox").first();
     Elements teamNamesDiv = scorebox.select("strong"), teamPoints = scorebox.select("div.score");
-    String awayTeam = teamNamesDiv.get(0).text(), homeTeam = teamNamesDiv.get(1).text(),
-        pointsAwayTeam = teamPoints.select("div").get(0).text(),
+    String pointsAwayTeam = teamPoints.select("div").get(0).text(),
         pointsHomeTeam = teamPoints.get(1).text();
     String[] dt = doc.select("div.scorebox_meta").select("div").first().text().split(" ");
-    String date = dt[2] + dt[3] + dt[4];
+    LocalDateTime datetime = ConvertHelper.convertStringWithFullMonthToLocalDate(dt);
 
-    match = new Match(date, awayTeam, pointsAwayTeam, homeTeam, pointsHomeTeam, null, matchId);
+    match =
+        new Match(datetime,
+            Team.builder().name(teamNamesDiv.get(0).text())
+                .teamId(ConvertHelper.returnTeamAttrRefId(teamNamesDiv.get(0))).build(),
+            pointsAwayTeam,
+            Team.builder().name(teamNamesDiv.get(1).text())
+                .teamId(ConvertHelper.returnTeamAttrRefId(teamNamesDiv.get(1))).build(),
+            pointsHomeTeam, null, matchId);
     // System.out.println(match);
     return match;
   }
@@ -222,7 +244,8 @@ public class MatchParserBasketballRef {
       matches = returnMatchesFromMonth(year, monthsArray[i]);
       seasonMatches.addAll(matches);
     }
-    Season season = new Season(year, seasonMatches, null);
+    Season season =
+        Season.builder().seasonYear(year).seasonMatches(seasonMatches).teams(null).build();
 
     return season;
   }

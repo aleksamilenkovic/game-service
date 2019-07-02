@@ -1,0 +1,188 @@
+databaseChangeLog:
+   - changeSet:
+      id: seasons
+      author: aleksa.milenkovic@mozzartbet.com
+      
+      changes:
+           - sql:
+             comment: Seasons
+             strip-comments: true
+             sql: |
+                   create table basketball_seasons(
+                      id number(7),
+                      season_year number(7),
+                      created_on timestamp,
+                      modified_on timestamp,
+                      primary key(id)
+                   );
+                   alter table basketball_seasons add constraint un_season unique (season_year);
+                    
+   - changeSet:
+      id: teams-and-players
+      author: aleksa.milenkovic@mozzartbet.com
+      
+      changes:
+        - sql:
+          comment: Teams and players
+          strip-comments: true
+          sql: |
+
+            create table basketball_teams(
+                id number(7),  
+                created_on timestamp, 
+                modified_on timestamp, 
+                name varchar2(40),
+                season_year number(7),
+                team_id varchar2(40),
+                primary key (id)
+            );
+            
+            create sequence sq_teams;
+            alter table basketball_teams add constraint un_teams unique (team_id);
+            alter table basketball_teams add constraint fk_teams foreign key(season_year) references basketball_seasons(season_year);
+            
+            create table basketball_players(
+                id number(7),
+                player_id varchar2(40),
+                team_id varchar2(40),
+                team_pk number(7), 
+                created_on timestamp, 
+                modified_on timestamp,
+                player_number varchar2(40),
+                player_name varchar2(40), 
+                position varchar2(40),
+                height varchar2(40),
+                weight varchar2(40), 
+                birthDate timestamp, 
+                nationality varchar2(40),
+                experience number(7), 
+                college varchar2(120),
+                primary key (id)
+            ); 
+            create sequence sq_players;
+            alter table basketball_players add constraint un_players_id unique (player_id,team_id);
+            alter table basketball_players add constraint fk_players_team foreign key (team_pk) references basketball_teams(id);
+            
+            
+  
+   - changeSet:
+      id: matches
+      author: aleksa.milenkovic@mozzartbet.com
+      
+      changes:
+        - sql:
+          comment: matches
+          strip-comments: true
+          sql: | 
+          
+               create table basketball_matches(
+                  id number(7),
+                  created_on timestamp,
+                  modified_on timestamp,
+                  match_id varchar2(20),
+                  date_time timestamp,
+                  away_id number(7),
+                  home_id number(7),
+                  away_team_id varchar2(40),
+                  final_score varchar2(10),
+                  home_team_id varchar2(40),
+                  home_team_points number(3),
+                  away_team_points number(3),
+                  season_year number(7),
+                  primary key(id)
+               );
+               create sequence sq_matches;
+               alter table basketball_matches add constraint un_match unique(match_id);
+               alter table basketball_matches add constraint fk_matches1 foreign key (away_id) references basketball_teams(id);
+               alter table basketball_matches add constraint fk_matches2 foreign key (home_id) references basketball_teams(id);
+        
+   - changeSet:
+        id: events
+        author: aleksa.milenkovic@mozzartbet.com
+            
+        changes:
+              - sql:
+                comment: Events and quarters
+                strip-comments: true
+                sql: |            
+                
+                   create table basketball_quarters(
+                      id number(7),
+                      created_on timestamp,
+                      modified_on timestamp,
+                      match_id varchar2(20),
+                      quarter_name varchar2(20),
+                      points_home_team number(3),
+                      points_away_team number(3),
+                      primary key(id)
+                   );
+                   create sequence sq_quarters;
+                   alter table basketball_quarters add constraint fk_quarter foreign key(match_id) references basketball_matches(match_id);
+             
+                   create table basketball_events(
+                          id number(7),
+                          created_on timestamp,
+                          modified_on timestamp,
+                          quarter_id number(7),
+                          quarter_name varchar2(20),
+                          match_id varchar(20),
+                          score_summary varchar2(80),
+                          event_time number(7,2),
+                          event_type varchar2(20),
+                          home_team_action varchar2(120),
+                          away_team_action varchar2(120),
+                          points_made number(3),
+                          neutral_action varchar2(120),
+                          first_player_id varchar2(40) null,
+                          second_player_id varchar2(40) null,
+                          first_player_team_id varchar2(40) null,
+                          second_player_team_id varchar2(40) null,
+                          primary key(id)
+                      );
+                      create sequence sq_events;
+                      alter table basketball_events add constraint fk_events_quarter foreign key(quarter_id) references basketball_quarters(id);
+                      alter table basketball_events add constraint fk_events_player1 foreign key (first_player_id,first_player_team_id) references basketball_players(player_id,team_id);
+                      alter table basketball_events add constraint fk_events_player2 foreign key (second_player_id,second_player_team_id) references basketball_players(player_id,team_id);       
+                      
+             
+   - changeSet:
+        id: stats
+        author: aleksa.milenkovic@mozzartbet.com
+            
+        changes:
+              - sql:
+                comment: playerstats (if playerid==null onda je teamstats) za match
+                strip-comments: true
+                sql: |       
+                 create table basketball_player_stats(
+                      id number(7),
+                      created_on timestamp,
+                      modified_on timestamp,
+                      player_id varchar2(40) null,
+                      team_id varchar2(40),
+                      match_id varchar(20),
+                      fieldgoals number(3),
+                      fieldgoal_attempts number(3),
+                      fieldgoal_percentage number(5,2),
+                      threepoint_fg number(3),
+                      threepoint_fg_attempts number(3),
+                      threepoint_fg_percentage number(5,2),
+                      freethrows number(3),
+                      freethrow_attempts number(3),
+                      freethrow_percentage number(5,2);
+                      offensive_rebounds number(3),
+                      defensive_rebounds number(3),
+                      total_rebounds number(3),
+                      assists number(3),
+                      steals number(3),
+                      blocks number(3),
+                      turnovers number(3),
+                      personal_fouls number(3),
+                      points number(3),
+                      primary key(id)
+                  );          
+                  create sequence sq_playerstats;       
+                  alter table basketball_player_stats add constraint fk_pstats foreign key(match_id) references basketball_matches(match_id);
+                  alter table basketball_player_stats add constraint fk_pstats2 foreign key(team_id) references basketball_teams(team_id);
+                  alter table basketball_player_stats add constraint fk_pstats3 foreign key(player_id) references basketball_players(player_id);      
+           

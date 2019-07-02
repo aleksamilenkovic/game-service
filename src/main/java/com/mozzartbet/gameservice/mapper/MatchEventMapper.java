@@ -1,5 +1,6 @@
 package com.mozzartbet.gameservice.mapper;
 
+import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import com.mozzartbet.gameservice.domain.MatchEvent;
 
@@ -10,10 +11,11 @@ public interface MatchEventMapper extends BaseMapper<MatchEvent> {
 
   public MatchEvent getById(Long id);
 
-  public int save(MatchEvent entity);
+  public int insert(MatchEvent entity);
 
   public int update(MatchEvent entity);
 
   public int deleteById(Long id);
 
+  public List<MatchEvent> getEventsFromMatch(String matchId);
 }

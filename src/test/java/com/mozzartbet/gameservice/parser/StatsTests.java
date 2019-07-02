@@ -7,7 +7,7 @@ import java.util.Map;
 import org.junit.Test;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.boxscore.PlayerStats;
-import com.mozzartbet.gameservice.stats.MatchStats;
+import com.mozzartbet.gameservice.stats.MatchStatsCalculator;
 import com.mozzartbet.gameservice.stats.StatisticCaclulator;
 
 public class StatsTests {
@@ -65,7 +65,7 @@ public class StatsTests {
      * teamParse.returnTeam("https://www.basketball-reference.com/teams/GSW/2019.html",
      * "Golden State Warriors");
      */
-    MatchStats stats = new MatchStats();
+    MatchStatsCalculator stats = new MatchStatsCalculator();
     stats.calculateMatchStats(match, "");
 
     assertEquals(stats.getHomeTeamStatsSummary().getThreePointFG(), 8);

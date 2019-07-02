@@ -22,6 +22,7 @@
 		<guava.version>27.1-jre</guava.version>
 		<slf4j-api.version>1.7.26</slf4j-api.version>
 		<mybatis-spring-boot-starter.version>2.0.1</mybatis-spring-boot-starter.version>
+		<oracle.version>12.2.0.1</oracle.version>
 	</properties>
 
 	<dependencies>
@@ -67,7 +68,16 @@
     <groupId>org.mybatis.spring.boot</groupId>
  			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>${mybatis-spring-boot-starter.version}</version>
-</dependency>
+	</dependency>
+	<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<version>${oracle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

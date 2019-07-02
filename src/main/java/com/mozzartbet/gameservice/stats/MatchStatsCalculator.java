@@ -15,7 +15,7 @@ import com.mozzartbet.gameservice.util.ValueComparator;
 import lombok.Data;
 
 @Data
-public class MatchStats {
+public class MatchStatsCalculator {
   private String matchId;
   private String awayTeamName;
   private String homeTeamName;
@@ -27,19 +27,14 @@ public class MatchStats {
                                                      // SKOKOVI)
   private Map<String, PlayerStats> playersStats;// statistika za svakog igraca posebno na mecu iz
 
-  private List<PlayerStats> homeTeamPlayerStats;
-  private List<PlayerStats> awayTeamPlayerStats;
+  private List<PlayerStats> homeTeamPlayerStats = new ArrayList<PlayerStats>();
+  private List<PlayerStats> awayTeamPlayerStats = new ArrayList<PlayerStats>();
 
   private PlayerStats awayTeamStatsSummary; // statistika po timu TOTAL
   private PlayerStats homeTeamStatsSummary;
   // u teamStatsSummary se smesta summary stats tima jer je model isti samo za playerId stavljam
   // teamName
   private Match match;
-
-  public MatchStats() {
-    homeTeamPlayerStats = new ArrayList<PlayerStats>();
-    awayTeamPlayerStats = new ArrayList<PlayerStats>();
-  }
 
 
 
@@ -52,23 +47,23 @@ public class MatchStats {
 
     // najbolji igraci po sortType-u
     statsByTeam();
-    showMatchStats();
+    // showMatchStats();
     sort(sortType);
-    showBestPlayers();
+    // showBestPlayers();
   }
 
   private void createLineScore() {
     int homeTeamPoints = 0, awayTeamPoints = 0;
     for (Quarter q : match.getQuarters()) {
-      lineScore.put(match.getAwayTeam(), q.getQuarterName(),
+      lineScore.put(match.getAwayTeam().getName(), q.getName(),
           q.getPointsAwayTeam() - awayTeamPoints);
-      lineScore.put(match.getHomeTeam(), q.getQuarterName(),
+      lineScore.put(match.getHomeTeam().getName(), q.getName(),
           q.getPointsHomeTeam() - homeTeamPoints);
       homeTeamPoints = q.getPointsHomeTeam();
       awayTeamPoints = q.getPointsAwayTeam();
     }
-    lineScore.put(match.getAwayTeam(), "TOTAL", match.getAwayTeamPoints());
-    lineScore.put(match.getHomeTeam(), "TOTAL", match.getHomeTeamPoints());
+    lineScore.put(match.getAwayTeam().getName(), "TOTAL", match.getAwayTeamPoints());
+    lineScore.put(match.getHomeTeam().getName(), "TOTAL", match.getHomeTeamPoints());
   }
 
   private void statsByTeam() {
@@ -81,11 +76,13 @@ public class MatchStats {
 
 
   public void sort(String sortType) {
+    if (sortType == null)
+      return;
     if (sortType.equals("assist"))
       sortByAssists();
     else if (sortType.equals("rebound"))
       sortByRebounds();
-    else
+    else if (sortType.equals("points"))
       sortByPoints();
   }
 
@@ -94,8 +91,10 @@ public class MatchStats {
     homeTeamPlayerStats.sort((Comparator.comparing(PlayerStats::getPoints)).reversed());
     HashMap<String, Integer> map = new HashMap<String, Integer>();
     for (int i = 0; i < 5; i++) {
-      map.put(awayTeamPlayerStats.get(i).getPlayerId(), awayTeamPlayerStats.get(i).getPoints());
-      map.put(homeTeamPlayerStats.get(i).getPlayerId(), homeTeamPlayerStats.get(i).getPoints());
+      map.put(awayTeamPlayerStats.get(i).getPlayer().getPlayerId(),
+          awayTeamPlayerStats.get(i).getPoints());
+      map.put(homeTeamPlayerStats.get(i).getPlayer().getPlayerId(),
+          homeTeamPlayerStats.get(i).getPoints());
     }
     sortBestPlayers(map);
   }
@@ -105,8 +104,10 @@ public class MatchStats {
     homeTeamPlayerStats.sort((Comparator.comparing(PlayerStats::getAssists)).reversed());
     HashMap<String, Integer> map = new HashMap<String, Integer>();
     for (int i = 0; i < 5; i++) {
-      map.put(awayTeamPlayerStats.get(i).getPlayerId(), awayTeamPlayerStats.get(i).getAssists());
-      map.put(homeTeamPlayerStats.get(i).getPlayerId(), homeTeamPlayerStats.get(i).getAssists());
+      map.put(awayTeamPlayerStats.get(i).getPlayer().getPlayerId(),
+          awayTeamPlayerStats.get(i).getAssists());
+      map.put(homeTeamPlayerStats.get(i).getPlayer().getPlayerId(),
+          homeTeamPlayerStats.get(i).getAssists());
     }
     sortBestPlayers(map);
   }
@@ -116,9 +117,9 @@ public class MatchStats {
     homeTeamPlayerStats.sort((Comparator.comparing(PlayerStats::getTotalRebounds)).reversed());
     HashMap<String, Integer> map = new HashMap<String, Integer>();
     for (int i = 0; i < 5; i++) {
-      map.put(awayTeamPlayerStats.get(i).getPlayerId(),
+      map.put(awayTeamPlayerStats.get(i).getPlayer().getPlayerId(),
           awayTeamPlayerStats.get(i).getTotalRebounds());
-      map.put(homeTeamPlayerStats.get(i).getPlayerId(),
+      map.put(homeTeamPlayerStats.get(i).getPlayer().getPlayerId(),
           homeTeamPlayerStats.get(i).getTotalRebounds());
     }
     sortBestPlayers(map);
@@ -131,10 +132,10 @@ public class MatchStats {
   }
 
   private void summaryStats() {
-    awayTeamStatsSummary = playersStats.get(match.getAwayTeam());
-    playersStats.remove(match.getAwayTeam());
-    homeTeamStatsSummary = playersStats.get(match.getHomeTeam());
-    playersStats.remove(match.getHomeTeam());
+    awayTeamStatsSummary = playersStats.get(match.getAwayTeam().getTeamId());
+    playersStats.remove(match.getAwayTeam().getTeamId());
+    homeTeamStatsSummary = playersStats.get(match.getHomeTeam().getTeamId());
+    playersStats.remove(match.getHomeTeam().getTeamId());
   }
 
 
@@ -144,12 +145,12 @@ public class MatchStats {
   }
 
   public void showLineScore() {
-    Map<String, Integer> awayteamPointsByQuarters = lineScore.row(match.getAwayTeam());
-    Map<String, Integer> homeTeamPointsByQuarters = lineScore.row(match.getHomeTeam());
+    Map<String, Integer> awayteamPointsByQuarters = lineScore.row(match.getAwayTeam().getName());
+    Map<String, Integer> homeTeamPointsByQuarters = lineScore.row(match.getHomeTeam().getName());
     System.out.println("________________________________________________________________");
     System.out.print("\t\t\t");
     for (Quarter quarter : match.getQuarters())
-      System.out.print("| " + quarter.getQuarterName());
+      System.out.print("| " + quarter.getName());
     System.out.print("| TOTAL");
     System.out.print("\n" + match.getAwayTeam() + ":");
     for (Map.Entry<String, Integer> entry : awayteamPointsByQuarters.entrySet())

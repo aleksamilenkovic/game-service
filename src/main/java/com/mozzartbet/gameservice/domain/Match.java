@@ -1,43 +1,45 @@
 package com.mozzartbet.gameservice.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.mozzartbet.gameservice.domain.boxscore.MatchStats;
 import com.mozzartbet.gameservice.util.ConvertHelper;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-public class Match {
+@SuperBuilder
+@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Match implements BaseEntity {
+  @EqualsAndHashCode.Include
+  private Long id;
 
+  private LocalDateTime createdOn;
+  private LocalDateTime modifiedOn;
   private String matchId;
-  private String date;
-  private String awayTeam;
+  private LocalDateTime dateTime;
+  private Team awayTeam;
   private String finalScore;
-  private String homeTeam;
+  private Team homeTeam;
   private List<Quarter> quarters;
   private int homeTeamPoints;
   private int awayTeamPoints;
   private List<String> homePlayersID;
   private List<String> awayPlayersID;
-
+  private MatchStats matchStats;
+  private int seasonYear;
   // za pocetak nek timovi budu stringovi, kasnije klase timovi (a vec su napravljene metode za
   // vracanje timova)
 
 
-  public Match() {
-    finalScore = "0:0";
-    // quarters = new Quarter[4];
-    // overtimes = new LinkedList<Quarter>();
-    homeTeam = "HomeTeam";
-    awayTeam = "AwayTeam";
-    homeTeamPoints = 0;
-    awayTeamPoints = 0;
-    quarters = new ArrayList<Quarter>();
-    date = "";
-  }
 
-  public Match(String date, String awayTeam, String awayTeamPoints, String homeTeam,
+  public Match(LocalDateTime date, Team awayTeam, String awayTeamPoints, Team homeTeam,
       String homeTeamPoints, List<Quarter> quarters, String matchId) {
-    this.date = date;
+    this.dateTime = date;
     this.homeTeam = homeTeam;
     this.awayTeam = awayTeam;
     this.homeTeamPoints = ConvertHelper.tryParseInt(homeTeamPoints);
@@ -47,12 +49,17 @@ public class Match {
     this.matchId = matchId;
     awayPlayersID = new ArrayList<String>();
     homePlayersID = new ArrayList<String>();
+    seasonYear = dateTime.getMonthValue() < 7 ? dateTime.getYear() - 1 : dateTime.getYear();
+    matchStats = new MatchStats();
   }
 
   @Override
   public String toString() {
-    return "Match [date=" + date + ", awayTeam=" + awayTeam + ", finalScore=" + finalScore
+    return "Match [date=" + dateTime + ", awayTeam=" + awayTeam + ", finalScore=" + finalScore
         + ", homeTeam=" + homeTeam + ", matchEvents=" + quarters + "]";
   }
 
+  public void calculateStats() {
+    matchStats.calculateMatchStats(this);
+  }
 }

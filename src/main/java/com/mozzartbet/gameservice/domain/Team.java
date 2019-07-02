@@ -18,6 +18,7 @@ public class Team implements BaseEntity {
   private LocalDateTime modifiedOn;
   private String name;
   private String teamId;
+  private int seasonYear;
   private List<Player> players;
 
 }

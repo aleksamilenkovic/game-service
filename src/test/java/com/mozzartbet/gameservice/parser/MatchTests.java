@@ -15,8 +15,9 @@ public class MatchTests {
   @Test
   public void testMatchNotNull() {
     MatchParserBasketballRef jmp = new MatchParserBasketballRef();
-    Match match = jmp.returnMatch("201112260PHO", null);
+    Match match = jmp.returnMatch("201812260BRK", null);
     // assertEquals(match.getMatchEvents().get(0).getTimestamp(), "12:00.0");
+    System.out.println(match.getQuarters().get(2).getMatchEvents().size());
     assertThat(match, IsNull.notNullValue());
   }
 
@@ -35,15 +36,15 @@ public class MatchTests {
     List<Match> matches = jmp.returnMatchesFromMonth(2012, "december");
     assertEquals(56, matches.size()); // System.out.println(matches); }
   }
-  
-  
-  
+
+
+
   /*
    * ovo je dug test posto vraca celu sezonu live pa je pod komentarom da ga ne bih pokretao svaki
    * put
    */
 
-  // @Test
+  @Test
   public void testReturningSeason() throws UrlException {
     MatchParserBasketballRef jmp = new MatchParserBasketballRef();
     Season s = null;
