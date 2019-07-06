@@ -32,11 +32,6 @@ public class TeamMapperTest extends GameServiceApplicationTests {
   @Autowired
   private SeasonMapper seasonMapper;
 
-  @Test
-  public void getTeamWithPlayers() {
-    Team t = playerMapper.getTeamWithPlayers("BOS/2019");
-    assertEquals(t.getName(), "Boston Celtics");
-  }
 
   @Test
   public void returnAllTeamsAndPlayersFromSeason() {
@@ -56,9 +51,9 @@ public class TeamMapperTest extends GameServiceApplicationTests {
 
   @Test
   @Commit
-  public void saveAllTeamsAndPlayersForSeason() {
+  public void saveAllTeamsAndPlayersForAllSeasons() {
 
-    Multimap<Integer, List<Team>> allTeams = teamParser.readTeamsFromSpecificSeasonTillNow(2017);
+    Multimap<Integer, List<Team>> allTeams = teamParser.readTeamsFromSpecificSeasonTillNow(2010);
     for (List<Team> teams : allTeams.values()) {
       teams.forEach(team -> {
         teamMapper.insert(team);
@@ -73,7 +68,8 @@ public class TeamMapperTest extends GameServiceApplicationTests {
   public void testCrud() throws Exception {
 
     assertEquals(teamMapper.count(), 0L);
-
+    Season season = Season.builder().seasonYear(2019).build();
+    seasonMapper.insert(season);
     LocalDateTime now = LocalDateTime.now();
 
     log.info("adding new team");

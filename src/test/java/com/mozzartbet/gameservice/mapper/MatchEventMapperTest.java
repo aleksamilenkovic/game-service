@@ -12,6 +12,7 @@ import com.mozzartbet.gameservice.domain.MatchEvent;
 import com.mozzartbet.gameservice.domain.MatchEventType;
 import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.domain.Quarter;
+import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.domain.Team;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,9 +30,13 @@ public class MatchEventMapperTest extends GameServiceApplicationTests {
   private MatchMapper matchMapper;
   @Autowired
   private QuarterMapper quarterMapper;
+  @Autowired
+  private SeasonMapper seasonMapper;
 
   @Test
   public void testCrud() {
+    Season season = Season.builder().seasonYear(2019).build();
+    seasonMapper.insert(season);
     Team t1 = Team.builder().name("KK Toplicanin").teamId("TOP/2019").seasonYear(2019).build(),
         t2 = Team.builder().name("KK Prokuplje").teamId("PK/2019").seasonYear(2019).build();
     teamMapper.insert(t1);

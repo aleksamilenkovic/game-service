@@ -10,15 +10,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class MatchStats {
-  private String matchId;
+  private Match match;
   private Table<String, String, Integer> lineScore;
   private List<PlayerStats> homeTeamPlayerStats;
   private List<PlayerStats> awayTeamPlayerStats;
 
   public void calculateMatchStats(Match match) {
+    this.match = match;
     MatchStatsCalculator msc = new MatchStatsCalculator();
     msc.calculateMatchStats(match, null);
-    matchId = match.getMatchId();
     lineScore = msc.getLineScore();
     homeTeamPlayerStats = msc.getHomeTeamPlayerStats();
     awayTeamPlayerStats = msc.getAwayTeamPlayerStats();

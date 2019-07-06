@@ -40,8 +40,10 @@ public class MatchStatsCalculator {
 
   public void calculateMatchStats(Match match, String sortType) {
     this.match = match;
-    createLineScore(); // pravi linescore poena po cetvrtinama i timu
-    playersStats = StatisticCaclulator.returnPlayersStatsIndividual(match, match.getHomePlayersID(),
+    createLineScore();
+    // pravi linescore poena po cetvrtinama i timu
+    StatisticCaclulator scalc = new StatisticCaclulator();
+    playersStats = scalc.returnPlayersStatsIndividual(match, match.getHomePlayersID(),
         match.getAwayPlayersID());
     summaryStats();
 

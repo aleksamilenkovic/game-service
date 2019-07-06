@@ -15,9 +15,8 @@ public class MatchTests {
   @Test
   public void testMatchNotNull() {
     MatchParserBasketballRef jmp = new MatchParserBasketballRef();
-    Match match = jmp.returnMatch("201812260BRK", null);
+    Match match = jmp.returnMatch("201804140PHI", null, 2019);
     // assertEquals(match.getMatchEvents().get(0).getTimestamp(), "12:00.0");
-    System.out.println(match.getQuarters().get(2).getMatchEvents().size());
     assertThat(match, IsNull.notNullValue());
   }
 
@@ -25,7 +24,7 @@ public class MatchTests {
   @Test
   public void testMatchFinalScore() {
     MatchParserBasketballRef jmp = new MatchParserBasketballRef();
-    Match match = jmp.returnMatch("201905200POR", "pbp201905200POR");
+    Match match = jmp.returnMatch("201905200POR", "pbp201905200POR", 2019);
     assertEquals(match.getFinalScore(), "119 - 117");
   }
 
@@ -33,8 +32,8 @@ public class MatchTests {
   @Test
   public void testNumberOfMatchesInMonth() {
     MatchParserBasketballRef jmp = new MatchParserBasketballRef();
-    List<Match> matches = jmp.returnMatchesFromMonth(2012, "december");
-    assertEquals(56, matches.size()); // System.out.println(matches); }
+    List<Match> matches = jmp.returnMatchesFromMonth(2017, "april");
+    assertEquals(140, matches.size()); // System.out.println(matches); }
   }
 
 
@@ -48,8 +47,8 @@ public class MatchTests {
   public void testReturningSeason() throws UrlException {
     MatchParserBasketballRef jmp = new MatchParserBasketballRef();
     Season s = null;
-    s = jmp.returnSeasonMatches(2012);
-    assertEquals(s.getSeasonYear(), 2012);
+    s = jmp.returnSeasonMatches(2019);
+    assertEquals(s.getSeasonMatches().size(), 1312);
   }
 
 

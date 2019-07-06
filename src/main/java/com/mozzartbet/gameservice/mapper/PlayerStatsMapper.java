@@ -11,9 +11,9 @@ public interface PlayerStatsMapper extends BaseMapper<PlayerStats> {
 
   public PlayerStats getById(@Param("id") Long id);
 
-  public int insert(@Param("playerStats") PlayerStats playerStats);
+  public int insert(PlayerStats playerStats);
 
-  public int update(@Param("playerStats") PlayerStats playerStats);
+  public int update(PlayerStats playerStats);
 
   public int deleteById(@Param("id") Long id);
 

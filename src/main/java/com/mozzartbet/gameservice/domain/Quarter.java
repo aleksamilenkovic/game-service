@@ -37,6 +37,8 @@ public class Quarter implements BaseEntity {
   }
 
   public void calculateResult() {
+    if (matchEvents.size() < 2)
+      return;
     String result[] = matchEvents.get(matchEvents.size() - 2).getScoreSummary().isEmpty()
         ? matchEvents.get(matchEvents.size() - 1).getScoreSummary().split("-")
         : matchEvents.get(matchEvents.size() - 2).getScoreSummary().split("-");

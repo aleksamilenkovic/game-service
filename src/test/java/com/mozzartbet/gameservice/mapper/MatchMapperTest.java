@@ -37,11 +37,15 @@ public class MatchMapperTest extends GameServiceApplicationTests {
   private MatchEventMapper eventMapper;
   @Autowired
   private QuarterMapper quarterMapper;
+  @Autowired
+  private SeasonMapper seasonMapper;
 
   @Test
   @Commit
   public void testMatchAndEvents() {
-    Match match = matchParser.returnMatch("201812260BRK", null);
+    Season season = Season.builder().seasonYear(2019).build();
+    seasonMapper.insert(season);
+    Match match = matchParser.returnMatch("201812260BRK", null, 2019);
     matchMapper.insert(match);
     match.getQuarters().forEach(quarter -> {
       quarterMapper.insert(quarter);
@@ -55,6 +59,7 @@ public class MatchMapperTest extends GameServiceApplicationTests {
 
     Season season = Season.builder().seasonYear(2019)
         .seasonMatches(matchParser.returnMatchesFromMonth(2019, "december")).build();
+    seasonMapper.insert(season);
     /*
      * season.setTeams(teamParser.readTeamsFromSeason(2019)); season.getTeams().forEach((team) -> {
      * teamMapper.save(team); team.getPlayers().forEach((player) -> playerMapper.save(player)); });
@@ -92,6 +97,8 @@ public class MatchMapperTest extends GameServiceApplicationTests {
 
   @Test
   public void testMatchWithQuarters() {
+    Season season = Season.builder().seasonYear(2019).build();
+    seasonMapper.insert(season);
     Team t1 = Team.builder().name("KK Toplicanin").teamId("TOP/2019").seasonYear(2019).build();
     Team t2 = Team.builder().name("KK Prokuplje").teamId("PK/2019").seasonYear(2019).build();
     teamMapper.insert(t1);
@@ -113,6 +120,8 @@ public class MatchMapperTest extends GameServiceApplicationTests {
 
   @Test
   public void testCrud() {
+    Season season = Season.builder().seasonYear(2019).build();
+    seasonMapper.insert(season);
     Team t1 = Team.builder().name("KK Toplicanin").teamId("TOP/2019").seasonYear(2019).build();
     Team t2 = Team.builder().name("KK Prokuplje").teamId("PK/2019").seasonYear(2019).build();
     teamMapper.insert(t1);

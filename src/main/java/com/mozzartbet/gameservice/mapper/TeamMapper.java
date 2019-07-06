@@ -48,7 +48,7 @@ public interface TeamMapper extends BaseMapper<Team> {
       @Result(property = "team.id", column = "team_pk"),
       @Result(property = "team.teamId", column = "team_id")
   })
-  @Select("select p.* from players p where p.team_id = #{teamId} order by p.id")
+  @Select("select p.* from basketball_players p where p.team_id = #{teamId} order by p.id")
   public List<Player> getPlayersForTeam(@Param("teamId") String teamId);
 
   @Results(value = {

@@ -39,8 +39,8 @@
         <selectKey keyProperty="id" resultType="long" order="BEFORE">
             select sq_matches.nextval from dual
         </selectKey>
-         INSERT INTO basketball_matches(id,created_on,modified_on,match_id,date_time,away_team_id,final_score,home_team_id,home_team_points,away_team_points)
-            values(#{id},current_timestamp,current_timestamp,#{matchId},#{dateTime},#{awayTeam.teamId},#{finalScore},#{homeTeam.teamId},#{homeTeamPoints},#{awayTeamPoints})
+         INSERT INTO basketball_matches(id,created_on,modified_on,match_id,date_time,away_team_id,final_score,home_team_id,home_team_points,away_team_points,season_year)
+            values(#{id},current_timestamp,current_timestamp,#{matchId},#{dateTime},#{awayTeam.teamId},#{finalScore},#{homeTeam.teamId},#{homeTeamPoints},#{awayTeamPoints},#{seasonYear})
     </insert>
     
     <!-- public Match getById(String matchId) -->

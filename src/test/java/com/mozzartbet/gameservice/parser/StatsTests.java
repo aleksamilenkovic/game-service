@@ -16,7 +16,7 @@ public class StatsTests {
   public void testPlayerStats() {
     MatchParserBasketballRef matchParse = new MatchParserBasketballRef();
     // TeamParser teamParse = new TeamParser();
-    Match match = matchParse.returnMatch("201905160GSW", "pbp201905200POR");
+    Match match = matchParse.returnMatch("201905160GSW", "pbp201905200POR", 2019);
     /*
      * Team team = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
      * "Portland Trail Blazers"); Team team2 =
@@ -24,7 +24,8 @@ public class StatsTests {
      * "Golden State Warriors");
      */
     // team.getPlayers().addAll(team2.getPlayers());
-    Map<String, PlayerStats> playersStats = StatisticCaclulator.returnPlayersStatsIndividual(match,
+    StatisticCaclulator scalc = new StatisticCaclulator();
+    Map<String, PlayerStats> playersStats = scalc.returnPlayersStatsIndividual(match,
         match.getHomePlayersID(), match.getAwayPlayersID());
     assertEquals(playersStats.get("c/curryst01").getPoints(), 37);
     // System.out.println(ps);
@@ -35,7 +36,7 @@ public class StatsTests {
     // TEST DA LI JE LILARD NA MECU DAO 23 POENA
     MatchParserBasketballRef matchParse = new MatchParserBasketballRef();
     // TeamParser teamParse = new TeamParser();
-    Match match = matchParse.returnMatch("201905160GSW", "pbp201905200POR");
+    Match match = matchParse.returnMatch("201905160GSW", "pbp201905200POR", 2019);
     /*
      * Team team = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
      * "Portland Trail Blazers"); Team team2 =
@@ -43,7 +44,8 @@ public class StatsTests {
      * "Golden State Warriors");
      */
     // team.getPlayers().addAll(team2.getPlayers());
-    Map<String, PlayerStats> playersStats = (HashMap<String, PlayerStats>) StatisticCaclulator
+    StatisticCaclulator scalc = new StatisticCaclulator();
+    Map<String, PlayerStats> playersStats = (HashMap<String, PlayerStats>) scalc
         .returnPlayersStatsIndividual(match, match.getHomePlayersID(), match.getAwayPlayersID());
     /*
      * for (PlayerStats ps : playersStats) { System.out.println(ps); }
@@ -58,7 +60,7 @@ public class StatsTests {
   public void testMatchStats() {
     MatchParserBasketballRef matchParse = new MatchParserBasketballRef();
     // +TeamParser teamParse = new TeamParser();
-    Match match = matchParse.returnMatch("201906100TOR", null);
+    Match match = matchParse.returnMatch("201906100TOR", null, 2019);
     /*
      * Team team1 = teamParse.returnTeam("https://www.basketball-reference.com/teams/POR/2019.html",
      * "Portland Trail Blazers"); Team team2 =

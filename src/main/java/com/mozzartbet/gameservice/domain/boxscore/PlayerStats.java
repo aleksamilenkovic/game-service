@@ -8,9 +8,11 @@ import com.mozzartbet.gameservice.util.ConvertHelper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
 
 @Data
+@SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 public class PlayerStats {
@@ -25,28 +27,28 @@ public class PlayerStats {
   private LocalDateTime createdOn;
   private LocalDateTime modifiedOn;
   private Player player;
-  private int fieldGoals = 0;
-  private int fieldGoalAttempts = 0;
-  private double fieldGoalPercentage = 0;
-  private int threePointFG = 0;
-  private int threePointFGAttempts = 0;
-  private double threePointFGPercentage = 0;
-  private int freeThrows = 0;
-  private int freeThrowAttempts = 0;
-  private double freeThrowPercentage = 0;
-  private int offensiveRebounds = 0;
-  private int defensiveRebounds = 0;
-  private int totalRebounds = 0;
-  private int assists = 0;
-  private int steals = 0;
-  private int blocks = 0;
-  private int turnovers = 0;
-  private int personalFouls = 0;
-  private int points = 0;
-  private int plusMinus = 0;
-  private float minutesPlayed = 0;
+  private int fieldGoals;
+  private int fieldGoalAttempts;
+  private double fieldGoalPercentage;
+  private int threePointFG;
+  private int threePointFGAttempts;
+  private double threePointFGPercentage;
+  private int freeThrows;
+  private int freeThrowAttempts;
+  private double freeThrowPercentage;
+  private int offensiveRebounds;
+  private int defensiveRebounds;
+  private int totalRebounds;
+  private int assists;
+  private int steals;
+  private int blocks;
+  private int turnovers;
+  private int personalFouls;
+  private int points;
+  private int plusMinus;
+  private float minutesPlayed;
   private float timeEntered = 12;
-  private float timeLeft = 0;
+  private float timeLeft;
   private Match match;
   private Team team;
 

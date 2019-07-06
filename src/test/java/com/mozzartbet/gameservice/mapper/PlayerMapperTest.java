@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import com.mozzartbet.gameservice.GameServiceApplicationTests;
 import com.mozzartbet.gameservice.domain.Player;
+import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.domain.Team;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,10 +22,14 @@ public class PlayerMapperTest extends GameServiceApplicationTests {
   private PlayerMapper playerMapper;
   @Autowired
   private TeamMapper teamMapper;
+  @Autowired
+  private SeasonMapper seasonMapper;
 
   @Test
   public void testCrud() {
     // assertEquals(0, playerMapper.count());
+    Season season = Season.builder().seasonYear(2019).build();
+    seasonMapper.insert(season);
     Team t = Team.builder().name("KK Toplicanin").teamId("TOP/2019").seasonYear(2019).build();
     teamMapper.insert(t);
 

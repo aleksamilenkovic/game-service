@@ -15,6 +15,7 @@ databaseChangeLog:
                       modified_on timestamp,
                       primary key(id)
                    );
+                   create sequence sq_seasons;
                    alter table basketball_seasons add constraint un_season unique (season_year);
                     
    - changeSet:
@@ -39,7 +40,7 @@ databaseChangeLog:
             
             create sequence sq_teams;
             alter table basketball_teams add constraint un_teams unique (team_id);
-            alter table basketball_teams add constraint fk_teams foreign key(season_year) references basketball_seasons(season_year);
+            alter table basketball_teams add constraint fk_teams foreign key(season_year) references basketball_seasons(season_year) ON DELETE CASCADE;
             
             create table basketball_players(
                 id number(7),
@@ -61,7 +62,7 @@ databaseChangeLog:
             ); 
             create sequence sq_players;
             alter table basketball_players add constraint un_players_id unique (player_id,team_id);
-            alter table basketball_players add constraint fk_players_team foreign key (team_pk) references basketball_teams(id);
+            alter table basketball_players add constraint fk_players_team foreign key (team_pk) references basketball_teams(id) ON DELETE CASCADE;
             
             
   
@@ -93,8 +94,8 @@ databaseChangeLog:
                );
                create sequence sq_matches;
                alter table basketball_matches add constraint un_match unique(match_id);
-               alter table basketball_matches add constraint fk_matches1 foreign key (away_id) references basketball_teams(id);
-               alter table basketball_matches add constraint fk_matches2 foreign key (home_id) references basketball_teams(id);
+               alter table basketball_matches add constraint fk_matches1 foreign key (away_id) references basketball_teams(id) ON DELETE CASCADE;
+               alter table basketball_matches add constraint fk_matches2 foreign key (home_id) references basketball_teams(id) ON DELETE CASCADE;
         
    - changeSet:
         id: events
@@ -117,7 +118,7 @@ databaseChangeLog:
                       primary key(id)
                    );
                    create sequence sq_quarters;
-                   alter table basketball_quarters add constraint fk_quarter foreign key(match_id) references basketball_matches(match_id);
+                   alter table basketball_quarters add constraint fk_quarter foreign key(match_id) references basketball_matches(match_id) ON DELETE CASCADE;
              
                    create table basketball_events(
                           id number(7),
@@ -140,9 +141,9 @@ databaseChangeLog:
                           primary key(id)
                       );
                       create sequence sq_events;
-                      alter table basketball_events add constraint fk_events_quarter foreign key(quarter_id) references basketball_quarters(id);
-                      alter table basketball_events add constraint fk_events_player1 foreign key (first_player_id,first_player_team_id) references basketball_players(player_id,team_id);
-                      alter table basketball_events add constraint fk_events_player2 foreign key (second_player_id,second_player_team_id) references basketball_players(player_id,team_id);       
+                      alter table basketball_events add constraint fk_events_quarter foreign key(quarter_id) references basketball_quarters(id) ON DELETE CASCADE; 
+                      alter table basketball_events add constraint fk_events_player1 foreign key (first_player_id,first_player_team_id) references basketball_players(player_id,team_id) ON DELETE CASCADE;
+                      alter table basketball_events add constraint fk_events_player2 foreign key (second_player_id,second_player_team_id) references basketball_players(player_id,team_id) ON DELETE CASCADE;       
                       
              
    - changeSet:
@@ -169,7 +170,7 @@ databaseChangeLog:
                       threepoint_fg_percentage number(5,2),
                       freethrows number(3),
                       freethrow_attempts number(3),
-                      freethrow_percentage number(5,2);
+                      freethrow_percentage number(5,2),
                       offensive_rebounds number(3),
                       defensive_rebounds number(3),
                       total_rebounds number(3),
@@ -182,7 +183,19 @@ databaseChangeLog:
                       primary key(id)
                   );          
                   create sequence sq_playerstats;       
-                  alter table basketball_player_stats add constraint fk_pstats foreign key(match_id) references basketball_matches(match_id);
-                  alter table basketball_player_stats add constraint fk_pstats2 foreign key(team_id) references basketball_teams(team_id);
-                  alter table basketball_player_stats add constraint fk_pstats3 foreign key(player_id) references basketball_players(player_id);      
-           
+                  alter table basketball_player_stats add constraint fk_pstats foreign key(match_id) references basketball_matches(match_id) ON DELETE CASCADE;
+                  alter table basketball_player_stats add constraint fk_pstats3 foreign key(player_id,team_id) references basketball_players(player_id,team_id) ON DELETE CASCADE;      
+       
+                    
+                 create table basketball_linescore(
+                      id number(7),
+                      created_on timestamp,
+                      modified_on timestamp,
+                      match_id varchar2(40),
+                      quarter_name varchar2(20),
+                      team_name varchar2(40),
+                      points number(3),
+                      primary key (id)
+                   );
+                   create sequence sq_linescore;
+                   alter table basketball_linescore add constraint fk_matchstats foreign key(match_id) references basketball_matches(match_id) ON DELETE CASCADE;

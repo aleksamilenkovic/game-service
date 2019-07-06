@@ -26,7 +26,7 @@
         <result column="steals" property="steals"/>
         <result column="blocks" property="blocks"/>
         <result column="turnovers" property="turnovers"/>
-        <result column="personal_fouls" property="modifiedOn"/>
+        <result column="personal_fouls" property="personalFouls"/>
         <result column="points" property="points"/>
         <association property="match" javaType="Match" >
             <id column="m_id" property="id"/>
@@ -45,10 +45,10 @@
         </association>
     </resultMap>
     
-    <select id="getById" parameterType="long" resultMap="PlayerMap">
+    <select id="getById" parameterType="long" resultMap="PlayerStatsMap">
        select
            ps.*,
-           m.id as m_id,m.match_id,m.season_year
+           m.id as m_id,m.match_id,m.season_year,
            t.id as t_id,t.team_id,t.name as team_name
            from basketball_player_stats ps
            inner join basketball_matches m on m.match_id=ps.match_id
@@ -56,7 +56,7 @@
            where ps.id=#{id}
     </select>
     
-    <select id="getByMatchIdAndPlayerId" parameterType="String" resultMap="PlayerMap">
+    <select id="getByMatchIdAndPlayerId" parameterType="String" resultMap="PlayerStatsMap">
        select
            ps.*,
            m.id as m_id,m.match_id,m.season_year
@@ -70,10 +70,10 @@
     <!-- public int insert(PlayerStats playerStats); -->
     <insert id="insert" parameterType="PlayerStats">
         <selectKey keyProperty="id" resultType="long" order="BEFORE">
-            select sq_players.nextval from dual
+            select sq_playerstats.nextval from dual
         </selectKey>
-        insert into basketball_player_stats (id,created_on,modified_on<if test="player!=null">,player_id</if><if test="team!=null">,team_id,match_id</if>,fieldgoals,fieldgoal_attempts,fieldgoal_percentage,threepoint_fg,threepoint_fg_attempts,threepoint_fg_percentage,freethrows,freethrow_attempts,freethrow_percentage,offensive_rebounds,defensive_rebounds,total_rebounds,assists,steals,blocks,turnovers,personal_fouls,points) 
-            values (#{id},current_timestamp,current_timestamp<if test="player!=null">,#{player.playerId,jdbcType=VARCHAR}</if><if test="team!=null">,#{team.teamId}</if>,#{fieldGoals},#{fieldGoalAttempts},#{fieldGoalPercentage},#{threePointFG},#{threePointFGAttempts},#{threePointFGPercentage},#{freeThrows},#{freeThrowAttempts},#{freeThrowPercentage},#{offensiveRebounds},#{defensiveRebounds},#{totalRebounds},#{assists},#{steals},#{blocks},#{turnovers},#{personalFouls},#{points})
+        insert into basketball_player_stats (id,created_on,modified_on<if test="{match}!=null">,match_id</if><if test="player!=null">,player_id</if><if test="team!=null">,team_id</if>,fieldgoals,fieldgoal_attempts,fieldgoal_percentage,threepoint_fg,threepoint_fg_attempts,threepoint_fg_percentage,freethrows,freethrow_attempts,freethrow_percentage,offensive_rebounds,defensive_rebounds,total_rebounds,assists,steals,blocks,turnovers,personal_fouls,points) 
+            values (#{id},current_timestamp,current_timestamp<if test="{match}!=null">,#{match.matchId}</if><if test="player!=null">,#{player.playerId,jdbcType=VARCHAR}</if><if test="team!=null">,#{team.teamId}</if>,#{fieldGoals},#{fieldGoalAttempts},#{fieldGoalPercentage},#{threePointFG},#{threePointFGAttempts},#{threePointFGPercentage},#{freeThrows},#{freeThrowAttempts},#{freeThrowPercentage},#{offensiveRebounds},#{defensiveRebounds},#{totalRebounds},#{assists},#{steals},#{blocks},#{turnovers},#{personalFouls},#{points})
     </insert>
     
      <!-- public int update(PlayerStats playerStats); -->
@@ -91,6 +91,7 @@
     <delete id="deleteById" parameterType="long">
         delete from basketball_player_stats where id = #{id}
     </delete>
+    
     
     
 </mapper>

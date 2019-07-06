@@ -15,7 +15,7 @@ public class StatisticCaclulator {
   // private Map<String, PlayerStats> playersStats;
   static Table<String, String, Integer> lineScore = HashBasedTable.create();
   static String awayTeam = "", homeTeam = "";
-  private static Map<String, PlayerStats> playersStats;
+  private Map<String, PlayerStats> playersStats;
 
 
   /*
@@ -30,7 +30,7 @@ public class StatisticCaclulator {
 
   // metoda koja na kraju izracuna za svakog igraca procente za statistiku
   // i za tim posebno
-  private static void calculatePlayersPercentage(Match match) {
+  private void calculatePlayersPercentage(Match match) {
     // Iterator it = playersStats.entrySet().iterator();
     PlayerStats homeTeam = new PlayerStats(null, match.getHomeTeam(), match),
         awayTeam = new PlayerStats(null, match.getAwayTeam(), match);
@@ -49,7 +49,7 @@ public class StatisticCaclulator {
     playersStats.put(match.getAwayTeam().getTeamId(), awayTeam);
   }
 
-  private static void returnPlayersStats(List<MatchEvent> matchEvents, String quarter) {
+  private void returnPlayersStats(List<MatchEvent> matchEvents, String quarter) {
     matchEvents.stream().filter(x -> x.getEventType() == MatchEventType.SHOOTFOR2).forEach(x -> {
       playersStats.get(x.getFirstPlayer().getPlayerId()).add2point(x.getPointsMade() != 2);
       if (x.getSecondPlayer() != null)
@@ -79,7 +79,7 @@ public class StatisticCaclulator {
   }
 
 
-  public static Map<String, PlayerStats> returnPlayersStatsIndividual(Match match,
+  public Map<String, PlayerStats> returnPlayersStatsIndividual(Match match,
       List<String> homePlayersId, List<String> awayPlayersId) {
     if (match.getQuarters() == null || awayPlayersId == null || homePlayersId == null)
       return null;
