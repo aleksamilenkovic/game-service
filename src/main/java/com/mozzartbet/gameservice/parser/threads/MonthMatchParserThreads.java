@@ -47,28 +47,24 @@ public class MonthMatchParserThreads {
     Elements rows = doc.select("table#schedule tbody").first().select("tr");
 
     List<Match> allMatches = new ArrayList<Match>();
-    // Get ExecutorService from Executors utility class, thread pool size is 9
+    // Get ExecutorService from Executors utility class, thread pool size is 2
     ExecutorService executorService = Executors.newFixedThreadPool(3);
     // create a list to hold the Future object associated with Callable
     // List<Future<List<Match>>> list = new ArrayList<Future<List<Match>>>();
     // Create MyCallable instance
     List<Callable<List<Match>>> taskList = new ArrayList<Callable<List<Match>>>();
     int start = 0, end = rows.size() / 3;
-    for (int i = 1; i <= 3; i++) {
-      Callable<List<Match>> callable = new CallableThread(year, rows, start, end);
-      int a = start;
-      start = end;
-      end = end * 2 - a;
-      if (i == 2)
-        if (rows.size() % 2 != 0)
-          end += 2;
+    Callable<List<Match>> callable1 = new CallableThread(year, rows, start, end);
+    start = end;
+    end *= 2;
+    Callable<List<Match>> callable2 = new CallableThread(year, rows, start, end);
+    start = end;
+    end = rows.size();
+    Callable<List<Match>> callable3 = new CallableThread(year, rows, start, end);
 
-      // submit Callable tasks to be executed by thread pool
-      // Future<List<Match>> future = executor.submit(callable);
-
-      // add Future to the list, we can get return value using Future
-      taskList.add(callable);
-    }
+    taskList.add(callable1);
+    taskList.add(callable2);
+    taskList.add(callable3);
     List<Future<List<Match>>> futures = null;
     try {
       futures = executorService.invokeAll(taskList);

@@ -30,7 +30,7 @@ public class SeasonMatchParserThreads {
   public List<Match> returnAllMatchesFromMonth(int year, String[] monthsArray) {
     List<Match> allMatches = new ArrayList<Match>();
     // Get ExecutorService from Executors utility class, thread pool size is 9
-    ExecutorService executorService = Executors.newFixedThreadPool(9);
+    ExecutorService executorService = Executors.newFixedThreadPool(7);
     // create a list to hold the Future object associated with Callable
     // List<Future<List<Match>>> list = new ArrayList<Future<List<Match>>>();
     // Create MyCallable instance

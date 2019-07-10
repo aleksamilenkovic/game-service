@@ -15,7 +15,7 @@ public class MatchTests {
   @Test
   public void testMatchNotNull() {
     MatchParserBasketballRef jmp = new MatchParserBasketballRef();
-    Match match = jmp.returnMatch("201804140PHI", null, 2019);
+    Match match = jmp.returnMatch("200001020MIA", null, 2000);
     // assertEquals(match.getMatchEvents().get(0).getTimestamp(), "12:00.0");
     assertThat(match, IsNull.notNullValue());
   }
@@ -32,8 +32,8 @@ public class MatchTests {
   @Test
   public void testNumberOfMatchesInMonth() {
     MatchParserBasketballRef jmp = new MatchParserBasketballRef();
-    List<Match> matches = jmp.returnMatchesFromMonth(2017, "april");
-    assertEquals(140, matches.size()); // System.out.println(matches); }
+    List<Match> matches = jmp.returnMatchesFromMonth(2019, "april");
+    assertEquals(127, matches.size()); // System.out.println(matches); }
   }
 
 

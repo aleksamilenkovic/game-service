@@ -1,6 +1,7 @@
 package com.mozzartbet.gameservice.domain.boxscore;
 
 import java.time.LocalDateTime;
+import com.mozzartbet.gameservice.domain.BaseEntity;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.domain.Team;
@@ -15,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
-public class PlayerStats {
+public class PlayerStats implements BaseEntity {
   public PlayerStats(String playerid, Team team, Match match) {
     this.player = playerid == null ? null : Player.builder().playerId(playerid).team(team).build();
     this.team = team;

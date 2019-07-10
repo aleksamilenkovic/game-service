@@ -15,6 +15,7 @@ import com.mozzartbet.gameservice.domain.Quarter;
 import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.domain.Team;
 import com.mozzartbet.gameservice.exception.UrlException;
+import com.mozzartbet.gameservice.parser.threads.MonthMatchParserThreads;
 import com.mozzartbet.gameservice.parser.threads.SeasonMatchParserThreads;
 import com.mozzartbet.gameservice.util.ConvertHelper;
 import com.mozzartbet.gameservice.util.JsoupHelper;
@@ -143,7 +144,8 @@ public class MatchParserBasketballRef {
   public Match returnMatch(String matchId, String fileName, int year) {
     Match match = null;
     Document doc = null;
-    String url = "https://www.basketball-reference.com/boxscores/pbp/" + matchId + ".html";
+    String url = String.format("https://www.basketball-reference.com/boxscores/%s.html",
+        year >= 2001 ? "pbp/" + matchId : matchId);
     try {
       doc = fileName == null ? JsoupHelper.connectToLivePage(url)
           : JsoupHelper.connectToLocalPage(fileName);
@@ -157,7 +159,7 @@ public class MatchParserBasketballRef {
     String pointsAwayTeam = teamPoints.select("div").get(0).text(),
         pointsHomeTeam = teamPoints.get(1).text();
     String[] dt = doc.select("div.scorebox_meta").select("div").first().text().split(" ");
-    LocalDateTime datetime = ConvertHelper.convertStringWithFullMonthToLocalDate(dt);
+    LocalDateTime datetime = ConvertHelper.convertStringWithFullMonthToLocalDate(dt, year < 2001);
     Team awayTeam =
         Team.builder().name(teamNamesDiv.get(0).text())
             .teamId(ConvertHelper.returnTeamAttrRefId(teamNamesDiv.get(0))).build(),
@@ -169,8 +171,10 @@ public class MatchParserBasketballRef {
     match.setQuarters(quarters);
 
 
+
     if (year >= 2001)
       match.calculateStats();
+
     return match;
   }
 
@@ -193,7 +197,7 @@ public class MatchParserBasketballRef {
     String pointsAwayTeam = teamPoints.select("div").get(0).text(),
         pointsHomeTeam = teamPoints.get(1).text();
     String[] dt = doc.select("div.scorebox_meta").select("div").first().text().split(" ");
-    LocalDateTime datetime = ConvertHelper.convertStringWithFullMonthToLocalDate(dt);
+    LocalDateTime datetime = ConvertHelper.convertStringWithFullMonthToLocalDate(dt, true);
 
     match =
         new Match(datetime,
@@ -221,23 +225,19 @@ public class MatchParserBasketballRef {
       return matches;
     }
 
-    Elements rows = doc.select("table#schedule tbody").first().select("tr");
-    for (int i = 0; i < rows.size(); i++) {
-      Element row = rows.get(i);
-      Elements cols = row.select("td");
-      if (cols.isEmpty() || cols.get(cols.size() - 4).text().isEmpty())
-        continue;
+    /*
+     * Elements rows = doc.select("table#schedule tbody").first().select("tr"); for (int i = 0; i <
+     * rows.size(); i++) { Element row = rows.get(i); Elements cols = row.select("td"); if
+     * (cols.isEmpty() || cols.get(cols.size() - 4).text().isEmpty()) continue;
+     * 
+     * String matchId = cols.get(cols.size() - 4).select("a").attr("href"); matchId =
+     * matchId.substring(11, matchId.length() - 5); // System.out.println(matchId); Match match =
+     * returnMatch(matchId, null, year); matches.add(match); }
+     */
+    MonthMatchParserThreads monthThreads = new MonthMatchParserThreads();
 
-      String matchId = cols.get(cols.size() - 4).select("a").attr("href");
-      matchId = matchId.substring(11, matchId.length() - 5); // System.out.println(matchId);
-      Match match = returnMatch(matchId, null, year);
-      matches.add(match);
-    }
-
-    // MonthMatchParserThreads monthThreads = new MonthMatchParserThreads();
-
-    return matches;
-    // monthThreads.returnAllMonthMatches(year, doc);
+    // return matches;
+    return monthThreads.returnAllMonthMatches(year, doc);
   }
 
   public Season returnSeasonMatches(int year) throws UrlException {

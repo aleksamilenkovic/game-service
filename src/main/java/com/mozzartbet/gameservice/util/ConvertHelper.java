@@ -49,9 +49,15 @@ public abstract class ConvertHelper {
             .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter());
   }
 
-  public static LocalDateTime convertStringWithFullMonthToLocalDate(String[] dt) {
-    String dateString = dt[0] + " " + dt[1] + " " + dt[2] + " " + dt[3] + " " + dt[4];
-    return LocalDateTime.parse(dateString,
-        new DateTimeFormatterBuilder().appendPattern("h:mm a, MMMM d, uuuu").toFormatter());
+  public static LocalDateTime convertStringWithFullMonthToLocalDate(String[] dt, boolean oldGame) {
+    String dateString = oldGame ? dt[0] + " " + dt[1] + " " + dt[2]
+        : dt[0] + " " + dt[1] + " " + dt[2] + " " + dt[3] + " " + dt[4];
+    return oldGame
+        ? LocalDateTime.parse(dateString,
+            new DateTimeFormatterBuilder().appendPattern("MMMM d, uuuu")
+                .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0).toFormatter())
+        : LocalDateTime.parse(dateString,
+            new DateTimeFormatterBuilder().appendPattern("h:mm a, MMMM d, uuuu").toFormatter());
   }
 }

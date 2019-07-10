@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.domain.Team;
+import com.mozzartbet.gameservice.service.dto.PlayerSearchRequest;
 
 @Mapper
 public interface PlayerMapper extends BaseMapper<Player> {
@@ -42,5 +43,8 @@ public interface PlayerMapper extends BaseMapper<Player> {
   public List<Player> getPlayersForTeam(@Param("teamId") String teamId);
 
   public Team getTeamWithPlayers(@Param("teamId") String teamId);
+
+
+  public List<Player> searchPlayers(@Param("request") PlayerSearchRequest request);
 
 }

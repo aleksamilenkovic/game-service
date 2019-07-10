@@ -13,9 +13,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Season {
+public class Season implements BaseEntity {
   @EqualsAndHashCode.Include
-  private long id;
+  private Long id;
 
   private LocalDateTime createdOn;
   private LocalDateTime modifiedOn;

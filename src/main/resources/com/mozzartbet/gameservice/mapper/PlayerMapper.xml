@@ -119,4 +119,32 @@
             t.team_id = #{teamId}
         
 	</select>
+    
+            
+    <!--  public List<Player> searchPlayers(@Param("request") PlayerSearchRequest request); -->
+    <select id="searchPlayers" resultMap="PlayerMap">
+         select 
+            p.*
+         from
+           basketball_players p
+                <if test="request.teamName != null">
+                    inner join basketball_teams t on t.id = p.team_id
+                </if>
+         <where>
+            <if test="request.playerName != null">
+                lower(p.player_name) like lower(#{request.playerName} || '%')
+            </if>
+            <if test="request.teamPK != null">
+                and p.team_pk = #{request.teamPK}
+            </if>
+            <if test="request.teamId != null">
+                and p.team_id = #{request.teamId}
+            </if>
+             <if test="request.teamName != null">
+                and lower(t.name) like lower(#{request.teamName} || '%')
+             </if>
+          </where>
+         order by
+            p.id
+    </select>
 </mapper>
