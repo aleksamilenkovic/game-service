@@ -6,7 +6,6 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Service;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.MatchEvent;
 import com.mozzartbet.gameservice.domain.MatchEventType;
@@ -24,7 +23,7 @@ import com.mozzartbet.gameservice.util.MatchEventHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
+
 @Slf4j
 @RequiredArgsConstructor
 public class MatchParserBasketballRef {

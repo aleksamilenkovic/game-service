@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Service;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.mozzartbet.gameservice.domain.Team;
@@ -16,11 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
-@Service
 @Slf4j
 @RequiredArgsConstructor
 public class TeamParserBasketballRef implements TeamParser {
-
 
   public Team returnTeamLive(String pageUrl) {
     return returnTeam(pageUrl, false);

@@ -1,6 +1,5 @@
 package com.mozzartbet.gameservice.service;
 
-import java.util.List;
 import java.util.Map;
 import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.service.dto.PlayerSearchRequest;
@@ -12,12 +11,12 @@ public interface PlayerService {
   // 3. Dilemma: C/Q separation or minimize roundtrips
 
   // Inconsistencies
-  public List<Player> findPlayersByName(String playerName, Long teamId);
+  // public List<Player> findPlayersByName(String playerName, String teamId);
 
   // Method can evolve while keeping the same signature
   public PlayerSearchResponse searchPlayers(PlayerSearchRequest request);
 
-  public Player save(Player player);
+  public int save(Player player);
 
   public Map<Long, Player> getTeamPlayers(Long teamId);
 

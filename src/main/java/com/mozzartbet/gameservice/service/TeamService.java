@@ -1,13 +1,7 @@
 package com.mozzartbet.gameservice.service;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
-import com.mozzartbet.gameservice.domain.Player;
+import java.util.List;
 import com.mozzartbet.gameservice.domain.Team;
-import com.mozzartbet.gameservice.mapper.TeamMapper;
-import com.mozzartbet.gameservice.parser.TeamParser;
-
-
 
 // IDEJA JE DA SE U MEDJUVREMENU ODVOJI PARSER I SERVIS ZA SVAKU PARSER KLASU
 // KAKO BI CEO SERVIS ZA CUVANJE TIMOVA I IGRACA BIO AGILAN UKOLIKO SE DODAJE PARSER ZA DRUGI SAJT
@@ -15,20 +9,13 @@ import com.mozzartbet.gameservice.parser.TeamParser;
 // DOK CE PARSER SAMO DA IH PROSLEDI (npr. u vidu
 // stringa, niza stringova...)
 // @Service
-public class TeamService {
-  @Autowired
-  TeamParser teamParser;
-  @Autowired
-  TeamMapper teamMapper;
+public interface TeamService {
 
-  public void saveTeam(String fileName) {
-    Team team = teamParser.returnTeamLocal(fileName);
-    teamMapper.insert(team);
-  }
+  public int save(Team team);
 
-  public Team getTeam(String teamId) {
-    return teamMapper.getByTeamId(teamId);
-  }
+  public Team getTeam(Long id);
 
-  public void savePlayer(Player p) {}
+  public Team parseTeam(String teamId);
+
+  public List<Team> parseSeasonTeams(int year);
 }

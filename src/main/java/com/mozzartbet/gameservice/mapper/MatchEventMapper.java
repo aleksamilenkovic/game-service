@@ -17,5 +17,7 @@ public interface MatchEventMapper extends BaseMapper<MatchEvent> {
 
   public int deleteById(Long id);
 
-  public List<MatchEvent> getEventsFromMatch(String matchId);
+  public List<MatchEvent> getEventsFromQuarterId(Long id);
+
+  public List<MatchEvent> getEventsForMatchAndQuarter(String matchId, String quarterName);
 }

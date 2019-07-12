@@ -47,6 +47,9 @@
 			
 	</resultMap>
 	
+
+	
+	
 	<!-- public MatchEvent getById(Long id); -->
 	<select id="getById" parameterType="long" resultMap="MatchEventMap">
 		select 
@@ -54,6 +57,14 @@
 			from basketball_events e
 			where e.id=#{id}
 	</select>
+
+    <select id="getEventsFromQuarterId" parameterType="long" resultMap="MatchEventMap">
+        select
+        e.*
+        from basketball_events e
+        where e.quarter_id=#{id}
+    </select>
+
 
 	<!-- public int insert(MatchEvent); -->
 	<insert id="insert" parameterType="MatchEvent">

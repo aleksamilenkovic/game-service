@@ -15,7 +15,6 @@ import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.domain.Team;
 import com.mozzartbet.gameservice.exception.UrlException;
 import com.mozzartbet.gameservice.parser.MatchParserBasketballRef;
-import com.mozzartbet.gameservice.parser.TeamParser;
 import lombok.extern.slf4j.Slf4j;
 
 @ActiveProfiles("test")
@@ -27,10 +26,9 @@ public class MatchMapperTest extends GameServiceApplicationTests {
   private TeamMapper teamMapper;
   @Autowired
   private MatchMapper matchMapper;
-  @Autowired
-  private TeamParser teamParser;
-  @Autowired
-  private MatchParserBasketballRef matchParser;
+
+  private MatchParserBasketballRef matchParser = new MatchParserBasketballRef();
+
   @Autowired
   private PlayerMapper playerMapper;
   @Autowired

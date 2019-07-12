@@ -13,12 +13,4 @@ public interface BaseRepository<Entity extends BaseEntity> {
 
   public int deleteById(Long id);
 
-  public default Entity save(Entity entity) {
-    if (entity.getId() != null) {
-      update(entity);
-    } else {
-      insert(entity);
-    }
-    return getById(entity.getId());
-  }
 }

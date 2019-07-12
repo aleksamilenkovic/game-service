@@ -2,6 +2,7 @@ package com.mozzartbet.gameservice.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.domain.Team;
 import com.mozzartbet.gameservice.mapper.TeamMapper;
 
@@ -10,7 +11,7 @@ public class TeamRepository implements BaseRepository<Team> {
   @Autowired
   private TeamMapper teamMapper;
   @Autowired
-  private PlayerRepository playerRepository;
+  private PlayerRepository playerRepo;
 
   @Override
   public long count() {
@@ -43,5 +44,13 @@ public class TeamRepository implements BaseRepository<Team> {
   public int deleteById(Long id) {
     return teamMapper.deleteById(id);
   }
+
+  public int saveWithPlayers(Team team) {
+    insert(team);
+    for (Player p : team.getPlayers())
+      playerRepo.insert(p);
+    return 1;
+  }
+
 
 }

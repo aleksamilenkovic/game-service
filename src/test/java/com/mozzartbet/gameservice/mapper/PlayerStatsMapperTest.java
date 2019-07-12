@@ -3,7 +3,6 @@ package com.mozzartbet.gameservice.mapper;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import com.mozzartbet.gameservice.GameServiceApplicationTests;
@@ -25,16 +24,11 @@ public class PlayerStatsMapperTest extends GameServiceApplicationTests {
   @Autowired
   private MatchMapper matchMapper;
   @Autowired
-  private QuarterMapper quarterMapper;
-  @Autowired
-  private MatchEventMapper eventMapper;
-  @Autowired
   private PlayerStatsMapper playerStatsMapper;
-  @Autowired
-  private MatchParserBasketballRef matchParser;
+
+  private MatchParserBasketballRef matchParser = new MatchParserBasketballRef();
 
   @Test
-  @Commit
   public void testAllPlayerStatsFromMatch() {
     Match match = matchParser.returnMatch("201905200POR", "pbp201905200POR", 2019);
     matchMapper.insert(match);

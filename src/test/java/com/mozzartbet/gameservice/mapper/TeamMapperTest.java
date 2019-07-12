@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Multimap;
@@ -13,7 +12,7 @@ import com.mozzartbet.gameservice.GameServiceApplicationTests;
 import com.mozzartbet.gameservice.domain.Player;
 import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.domain.Team;
-import com.mozzartbet.gameservice.parser.TeamParser;
+import com.mozzartbet.gameservice.parser.TeamParserBasketballRef;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -24,8 +23,7 @@ public class TeamMapperTest extends GameServiceApplicationTests {
   @Autowired
   private TeamMapper teamMapper;
 
-  @Autowired
-  private TeamParser teamParser;
+  private TeamParserBasketballRef teamParser = new TeamParserBasketballRef();
 
   @Autowired
   private PlayerMapper playerMapper;
@@ -50,7 +48,6 @@ public class TeamMapperTest extends GameServiceApplicationTests {
   }
 
   @Test
-  @Commit
   public void saveAllTeamsAndPlayersForAllSeasons() {
 
     Multimap<Integer, List<Team>> allTeams = teamParser.readTeamsFromSpecificSeasonTillNow(2010);

@@ -23,7 +23,7 @@ public class TeamTests extends GameServiceApplicationTests {
     TeamParserBasketballRef jp = new TeamParserBasketballRef();
     Team team = jp.returnTeamLive("https://www.basketball-reference.com/teams/SAC/2000.html");
     Player p = team.getPlayers().get(9);
-    assertEquals(p.getName(), "Peja Stojakovic");
+    assertEquals(p.getName(), "Peja Stojaković");
 
   }
 
