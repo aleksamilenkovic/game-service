@@ -59,7 +59,7 @@
     <select id="getByMatchIdAndPlayerId" parameterType="String" resultMap="PlayerStatsMap">
        select
            ps.*,
-           m.id as m_id,m.match_id,m.season_year
+           m.id as m_id,m.match_id,m.season_year,
            t.id as t_id,t.team_id,t.name as team_name
            from basketball_player_stats ps
            inner join basketball_matches m on m.match_id=ps.match_id

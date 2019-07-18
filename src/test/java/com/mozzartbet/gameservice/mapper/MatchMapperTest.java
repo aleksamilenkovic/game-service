@@ -43,7 +43,7 @@ public class MatchMapperTest extends GameServiceApplicationTests {
   public void testMatchAndEvents() {
     Season season = Season.builder().seasonYear(2019).build();
     seasonMapper.insert(season);
-    Match match = matchParser.returnMatch("201812260BRK", null, 2019);
+    Match match = matchParser.returnMatch("201812260BRK", null);
     matchMapper.insert(match);
     match.getQuarters().forEach(quarter -> {
       quarterMapper.insert(quarter);

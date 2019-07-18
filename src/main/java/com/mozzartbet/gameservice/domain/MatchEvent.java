@@ -35,7 +35,6 @@ public class MatchEvent implements BaseEntity {
     this.neutralAction = neutralAction;
     this.eventTime = timestamp;
     this.quarter = quarter;
-    this.quarter = quarter;
     eventType = null;
   }// konstruktor za neutralnu akciju (jump ball, start/end of quarter, timeout
 
@@ -67,7 +66,6 @@ public class MatchEvent implements BaseEntity {
     // String result[] = scoreSummary.split("-");
     // resultHomeLead = Integer.parseInt(result[0]) - Integer.parseInt(result[1]);
     this.eventType = type;
-    this.quarter = quarter;
     this.quarter = quarter;
   }
 

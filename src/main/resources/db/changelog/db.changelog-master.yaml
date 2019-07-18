@@ -57,7 +57,7 @@ databaseChangeLog:
                 birthDate timestamp, 
                 nationality varchar2(40),
                 experience number(7), 
-                college varchar2(120),
+                college varchar2(150),
                 primary key (id)
             ); 
             create sequence sq_players;

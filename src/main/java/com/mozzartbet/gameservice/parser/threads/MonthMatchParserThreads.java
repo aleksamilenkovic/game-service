@@ -15,11 +15,10 @@ import com.mozzartbet.gameservice.parser.MatchParserBasketballRef;
 
 public class MonthMatchParserThreads {
   class CallableThread implements Callable<List<Match>> {
-    private final int year, start, end;
+    private final int start, end;
     private final Elements rows;
 
-    public CallableThread(int year, Elements rows, int start, int end) {
-      this.year = year;
+    public CallableThread(Elements rows, int start, int end) {
       this.rows = rows;
       this.start = start;
       this.end = end;
@@ -37,13 +36,13 @@ public class MonthMatchParserThreads {
 
         String matchId = cols.get(cols.size() - 4).select("a").attr("href");
         matchId = matchId.substring(11, matchId.length() - 5);
-        matches.add(matchParser.returnMatch(matchId, null, year));
+        matches.add(matchParser.returnMatch(matchId, null));
       }
       return matches;
     }
   }
 
-  public List<Match> returnAllMonthMatches(int year, Document doc) {
+  public List<Match> returnAllMonthMatches(Document doc) {
     Elements rows = doc.select("table#schedule tbody").first().select("tr");
 
     List<Match> allMatches = new ArrayList<Match>();
@@ -54,13 +53,13 @@ public class MonthMatchParserThreads {
     // Create MyCallable instance
     List<Callable<List<Match>>> taskList = new ArrayList<Callable<List<Match>>>();
     int start = 0, end = rows.size() / 3;
-    Callable<List<Match>> callable1 = new CallableThread(year, rows, start, end);
+    Callable<List<Match>> callable1 = new CallableThread(rows, start, end);
     start = end;
     end *= 2;
-    Callable<List<Match>> callable2 = new CallableThread(year, rows, start, end);
+    Callable<List<Match>> callable2 = new CallableThread(rows, start, end);
     start = end;
     end = rows.size();
-    Callable<List<Match>> callable3 = new CallableThread(year, rows, start, end);
+    Callable<List<Match>> callable3 = new CallableThread(rows, start, end);
 
     taskList.add(callable1);
     taskList.add(callable2);

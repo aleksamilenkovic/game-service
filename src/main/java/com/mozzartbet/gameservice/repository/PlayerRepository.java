@@ -30,7 +30,7 @@ public class PlayerRepository implements BaseRepository<Player> {
     if (entity == null || entity.getTeam() == null)
       return 0;
     Player player = getByPlayerIdAndTeamId(entity.getPlayerId(), entity.getTeam().getTeamId());
-    return player != null ? 1 : playerMapper.save(entity);
+    return player != null ? 0 : playerMapper.save(entity);
 
     // return playerMapper.save(entity);
   }
@@ -45,4 +45,7 @@ public class PlayerRepository implements BaseRepository<Player> {
     return playerMapper.deleteById(id);
   }
 
+  public Player getPlayersInfo(String playerId) {
+    return playerMapper.getInfosForPlayer(playerId);
+  }
 }

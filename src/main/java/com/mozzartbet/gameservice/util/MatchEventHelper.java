@@ -4,6 +4,7 @@ import org.jsoup.select.Elements;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.MatchEventType;
 import com.mozzartbet.gameservice.domain.Player;
+import com.mozzartbet.gameservice.domain.Team;
 
 public class MatchEventHelper {
 
@@ -40,13 +41,18 @@ public class MatchEventHelper {
     ids[0] = ConvertHelper.returnPlayerId(playersLink.get(0).attr("href"));
     ids[1] = playersLink.size() == 2 ? ConvertHelper.returnPlayerId(playersLink.get(1).attr("href"))
         : null;
-    players[0] = Player.builder().playerId(ids[0])
-        .team(match.getAwayPlayersID().contains(ids[0]) ? match.getAwayTeam() : match.getHomeTeam())
-        .build();
+    Team firstPlayerTeam =
+        match.getAwayPlayersID().contains(ids[0]) ? match.getAwayTeam()
+            : match.getHomePlayersID().contains(ids[0]) ? match.getHomeTeam() : null,
+        secondPlayerTeam = match.getAwayPlayersID().contains(ids[1]) ? match.getAwayTeam()
+            : match.getHomePlayersID().contains(ids[1]) ? match.getHomeTeam() : null;
+    players[0] =
+        firstPlayerTeam != null ? Player.builder().playerId(ids[0]).team(firstPlayerTeam).build()
+            : null;
     players[1] = ids[1] == null ? null
-        : Player.builder().playerId(ids[1]).team(
-            match.getAwayPlayersID().contains(ids[1]) ? match.getAwayTeam() : match.getHomeTeam())
-            .build();
+        : secondPlayerTeam != null
+            ? Player.builder().playerId(ids[1]).team(secondPlayerTeam).build()
+            : null;
     return players;
   }
 }

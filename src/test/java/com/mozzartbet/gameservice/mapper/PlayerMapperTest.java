@@ -28,9 +28,9 @@ public class PlayerMapperTest extends GameServiceApplicationTests {
   @Test
   public void testCrud() {
     // assertEquals(0, playerMapper.count());
-    Season season = Season.builder().seasonYear(2019).build();
+    Season season = Season.builder().seasonYear(1910).build();
     seasonMapper.insert(season);
-    Team t = Team.builder().name("KK Toplicanin").teamId("TOP/2019").seasonYear(2019).build();
+    Team t = Team.builder().name("KK Toplicanin").teamId("TOP/2019").seasonYear(1910).build();
     teamMapper.insert(t);
 
     Player p =
@@ -59,5 +59,16 @@ public class PlayerMapperTest extends GameServiceApplicationTests {
     log.info("GET TEAM WITH PLAYERS");
     Team teaaam = playerMapper.getTeamWithPlayers("TOP/2019");
     log.info(teaaam.toString());
+
+    Team t1 = Team.builder().name("KK Toplicanin").teamId("TOP/2018").seasonYear(1910).build();
+    teamMapper.insert(t1);
+    Player p1 = Player.builder().team(t1).name("Kyrie Irving").number("3")
+        .birthDate(LocalDateTime.now()).college("college").experience(8).playerId("irving")
+        .position("FG").height("7\"7").weight("210lbs").build();
+    playerMapper.insert(p1);
+
+    Player playerr = playerMapper.getInfosForPlayer("gasga");
+    assertEquals(player.getName(), "Kyrie Irving");
+    log.info(player.toString());
   }
 }

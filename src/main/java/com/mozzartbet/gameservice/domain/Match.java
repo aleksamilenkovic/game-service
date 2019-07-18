@@ -38,7 +38,7 @@ public class Match implements BaseEntity {
 
 
   public Match(LocalDateTime date, Team awayTeam, String awayTeamPoints, Team homeTeam,
-      String homeTeamPoints, List<Quarter> quarters, String matchId) {
+      String homeTeamPoints, List<Quarter> quarters, String matchId, int year) {
     this.dateTime = date;
     this.homeTeam = homeTeam;
     this.awayTeam = awayTeam;
@@ -49,7 +49,7 @@ public class Match implements BaseEntity {
     this.matchId = matchId;
     awayPlayersID = new ArrayList<String>();
     homePlayersID = new ArrayList<String>();
-    seasonYear = dateTime.getMonthValue() < 7 ? dateTime.getYear() - 1 : dateTime.getYear();
+    seasonYear = year;
     matchStats = new MatchStats();
   }
 

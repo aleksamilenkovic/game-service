@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.repository.SeasonRepository;
+import com.mozzartbet.gameservice.service.MatchService;
 import com.mozzartbet.gameservice.service.SeasonService;
 import com.mozzartbet.gameservice.service.TeamService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ public class SeasonServiceImpl implements SeasonService {
   private TeamService teamService;
   @Autowired
   private SeasonRepository seasonRepo;
+  @Autowired
+  private MatchService matchService;
 
   @Override
   public int saveSeason(Season season) {
@@ -25,6 +28,7 @@ public class SeasonServiceImpl implements SeasonService {
   public Season parseSeason(int year) {
     Season season = Season.builder().seasonYear(year).build();
     season.setTeams(teamService.parseSeasonTeams(year));
+    season.setSeasonMatches(matchService.parseSeasonMatches(year));
     return season;
   }
 
@@ -38,7 +42,7 @@ public class SeasonServiceImpl implements SeasonService {
     Season season = parseSeason(year);
     saveSeason(season);
     season.getTeams().forEach(team -> teamService.save(team));
-    // and matches here too
+    season.getSeasonMatches().forEach(match -> matchService.save(match));
     return season;
   }
 }

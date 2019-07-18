@@ -47,4 +47,5 @@ public interface PlayerMapper extends BaseMapper<Player> {
 
   public List<Player> searchPlayers(@Param("request") PlayerSearchRequest request);
 
+  public Player getInfosForPlayer(@Param("playerId") String playerId);
 }

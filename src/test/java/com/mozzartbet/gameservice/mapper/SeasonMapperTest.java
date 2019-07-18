@@ -36,17 +36,19 @@ public class SeasonMapperTest extends GameServiceApplicationTests {
   @Test
   public void testCrud() {
     log.info("Counting players stats...");
-    assertEquals(60, seasonMapper.count());
+    assertEquals(0, seasonMapper.count());
     Season season = Season.builder().seasonYear(1910).build();
     log.info("Saving the season");
     assertEquals(1, seasonMapper.insert(season));
     log.info("Fetching the season");
     Season s = seasonMapper.getById(season.getId());
     assertEquals(1910, s.getSeasonYear());
+    Season seasonByYear = seasonMapper.getByYear(1910);
+    assertEquals(1910, s.getSeasonYear());
     log.info("Deleting season from database");
     seasonMapper.deleteById(s.getId());
     log.info("Counting empty databse");
-    assertEquals(60, seasonMapper.count());
+    assertEquals(0, seasonMapper.count());
   }
 
   @Test
@@ -63,7 +65,7 @@ public class SeasonMapperTest extends GameServiceApplicationTests {
   public void testSeasonWithAllMatchesAndTeams() throws UrlException {
     MatchParserBasketballRef matchParser = new MatchParserBasketballRef();
     TeamParserBasketballRef teamParser = new TeamParserBasketballRef();
-    Season season = matchParser.returnSeasonMatches(2019);
+    Season season = matchParser.returnSeasonWithMatches(2019);
     season.setTeams(teamParser.readTeamsFromSeason(2019));
     seasonMapper.insert(season);
     season.getTeams().forEach(team -> {

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mozzartbet.gameservice.GameServiceApplicationTests;
 import com.mozzartbet.gameservice.domain.Match;
 import com.mozzartbet.gameservice.domain.Player;
+import com.mozzartbet.gameservice.domain.Season;
 import com.mozzartbet.gameservice.domain.Team;
 import com.mozzartbet.gameservice.domain.boxscore.PlayerStats;
 import com.mozzartbet.gameservice.parser.MatchParserBasketballRef;
@@ -25,12 +26,13 @@ public class PlayerStatsMapperTest extends GameServiceApplicationTests {
   private MatchMapper matchMapper;
   @Autowired
   private PlayerStatsMapper playerStatsMapper;
-
+  @Autowired
+  private SeasonMapper seasonMapper;
   private MatchParserBasketballRef matchParser = new MatchParserBasketballRef();
 
   @Test
   public void testAllPlayerStatsFromMatch() {
-    Match match = matchParser.returnMatch("201905200POR", "pbp201905200POR", 2019);
+    Match match = matchParser.returnMatch("201905200POR", "pbp201905200POR");
     matchMapper.insert(match);
     match.getMatchStats().getAwayTeamPlayerStats().forEach(ps -> playerStatsMapper.insert(ps));
     match.getMatchStats().getHomeTeamPlayerStats().forEach(ps -> playerStatsMapper.insert(ps));
@@ -41,11 +43,12 @@ public class PlayerStatsMapperTest extends GameServiceApplicationTests {
   public void testCrud() {
     log.info("Counting players stats...");
     assertEquals(0, playerStatsMapper.count());
-
-    Team team = Team.builder().name("KK Toplicanin").seasonYear(2019).teamId("TOP/2019").build();
+    Season season = Season.builder().seasonYear(1910).build();
+    seasonMapper.insert(season);
+    Team team = Team.builder().name("KK Toplicanin").seasonYear(1910).teamId("TOP/2019").build();
     Player player =
         Player.builder().name("Marko Petrovic").experience(1).team(team).number("1").build();
-    Match match = Match.builder().awayTeam(team).seasonYear(2019).finalScore("112-110")
+    Match match = Match.builder().awayTeam(team).seasonYear(1910).finalScore("112-110")
         .matchId("2140/12").build();
     teamMapper.insert(team);
     playerMapper.insert(player);
@@ -57,6 +60,11 @@ public class PlayerStatsMapperTest extends GameServiceApplicationTests {
     PlayerStats playerStats = playerStatsMapper.getById(ps.getId());
     assertEquals(7, playerStats.getBlocks());
 
+    PlayerStats playerStatsByMatchAndPlayerId =
+        playerStatsMapper.getByMatchIdAndPlayerId(player.getPlayerId(), match.getMatchId());
+    assertEquals(7, playerStatsByMatchAndPlayerId.getBlocks());
+
     playerStatsMapper.deleteById(playerStats.getId());
+    assertEquals(playerStatsMapper.count(), 0);
   }
 }

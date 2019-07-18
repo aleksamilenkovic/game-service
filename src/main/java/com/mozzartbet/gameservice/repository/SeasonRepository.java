@@ -24,7 +24,8 @@ public class SeasonRepository implements BaseRepository<Season> {
   public int insert(Season entity) {
     if (entity == null)
       return 0;
-    return seasonMapper.save(entity);
+    Season season = getByYear(entity.getSeasonYear());
+    return season != null ? 0 : seasonMapper.save(entity);
   }
 
   @Override

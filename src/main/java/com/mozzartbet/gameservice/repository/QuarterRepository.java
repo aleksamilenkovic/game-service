@@ -1,9 +1,11 @@
 package com.mozzartbet.gameservice.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import com.mozzartbet.gameservice.domain.Quarter;
 import com.mozzartbet.gameservice.mapper.QuarterMapper;
 
+@Repository
 public class QuarterRepository implements BaseRepository<Quarter> {
   @Autowired
   private QuarterMapper quarterMapper;
@@ -23,7 +25,7 @@ public class QuarterRepository implements BaseRepository<Quarter> {
     if (entity == null || entity.getMatch() == null)
       return 0;
     Quarter quarter = getById(entity.getId());
-    return quarter != null ? 1 : quarterMapper.save(entity);
+    return quarter != null ? 0 : quarterMapper.save(entity);
   }
 
   @Override

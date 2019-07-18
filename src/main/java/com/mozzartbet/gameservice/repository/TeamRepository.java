@@ -32,7 +32,7 @@ public class TeamRepository implements BaseRepository<Team> {
     if (entity == null)
       return 0;
     Team player = getByTeamId(entity.getTeamId());
-    return player != null ? 1 : teamMapper.save(entity);
+    return player != null ? 0 : teamMapper.save(entity);
   }
 
   @Override

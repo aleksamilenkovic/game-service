@@ -16,7 +16,7 @@ public interface SeasonMapper extends BaseMapper<Season> {
   @Select("select id,created_on createdOn,modified_on modifiedOn,season_year seasonYear from basketball_seasons where id=#{id}")
   public Season getById(Long id);
 
-  @Select("select s.id id,s.created_on createdOn,s.modified_on modifiedOn,season_year seasonYear from basketball_seasons where s.season_year=#{seasonYear}")
+  @Select("select id ,created_on createdOn,modified_on modifiedOn,season_year seasonYear from basketball_seasons where season_year=#{seasonYear}")
   public Season getByYear(int seasonYear);
 
   @Insert("insert into basketball_seasons(id,created_on,modified_on,season_year)"

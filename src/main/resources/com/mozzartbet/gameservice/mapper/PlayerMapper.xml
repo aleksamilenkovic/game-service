@@ -147,4 +147,11 @@
          order by
             p.id
     </select>
+    
+    <select id="getInfosForPlayer" resultMap="PlayerMap">
+        select * from basketball_players 
+        where player_id=#{playerId}
+        order by created_on desc
+        offset 0 rows fetch next 1 rows only
+    </select>
 </mapper>
