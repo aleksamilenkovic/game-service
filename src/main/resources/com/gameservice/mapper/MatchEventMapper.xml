@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameservice.mapper.MatchEventMapper">
+	<!-- public long count(); -->
+	<select id="count" resultType="Long">
+		select count(*) from basketball_events
+	</select>
+
+	<resultMap type="MatchEvent" id="MatchEventMap">
+			<id column="id" property="id"/>
+			<result column="created_on" property="createdOn"/>
+			<result column="modified_on" property="modifiedOn"/>
+			<result column="score_summary" property="scoreSummary"/>
+			<result column="event_time" property="eventTime"/>
+			<result column="event_type" property="eventType"/>
+			<result column="event_timestamp" property="eventTimestamp"/>
+			<result column="home_team_action" property="homeTeamAction"/>
+			<result column="away_team_action" property="awayTeamAction"/>
+			<result column="points_made" property="pointsMade"/>
+			<result column="neutral_action" property="neutralAction"/>
+			<association property="quarter" javaType="Quarter">
+			 <result column="quarter_id" property="id"/>
+			 <result column="quarter_name" property="name"/>
+			 <association property="match" javaType="Match">
+			     <result column="m_id" property="id"/>
+			     <result column="match_id" property="matchId"/>
+			 </association>
+			</association>
+			<association property="firstPlayer" javaType="Player">
+			     <result column="first_id" property="id"/>
+			     <result column="first_player_id" property="playerId"/>
+			     <result column="first_player_name" property="name"/>
+			     <association property="team" javaType="Team">
+			         <result column="first_player_t_id" property="id"/>
+                    <result column="first_player_team_id" property="teamId"/>
+                    <result column="first_team_name" property="name"/>
+			     </association>
+			</association>
+			<association property="secondPlayer" javaType="Player">
+                 <result column="second_id" property="id"/>
+                 <result column="second_player_id" property="playerId"/>
+                 <result column="second_player_name" property="name"/>
+                 <association property="team" javaType="Team">
+                     <result column="second_player_t_id" property="id"/>
+                    <result column="second_player_team_id" property="teamId"/>
+                    <result column="second_team_name" property="name"/>
+                 </association>
+            </association>
+			
+	</resultMap>
+	
+    <sql id="getEvent">
+        select 
+            e.*,fp.id as first_id,fp.player_id as first_player_id,fp.player_name as first_player_name,fp.team_pk as first_player_t_id,
+            sp.id as second_id,sp.player_id as second_player_id,sp.player_name as second_player_name,sp.team_pk as second_player_t_id,
+            m.id as m_id
+            from basketball_events e
+            left join basketball_players fp on (e.first_player_id=fp.player_id and e.first_player_team_id=fp.team_id)
+            left join basketball_players sp on (e.second_player_id=sp.player_id and e.second_player_team_id=sp.team_id)
+            left join basketball_matches m on e.match_id=m.match_id
+       </sql>
+	
+	
+	<!-- public MatchEvent getById(Long id); -->
+	<select id="getById" parameterType="long" resultMap="MatchEventMap">
+		<include refid="getEvent"/>
+		where e.id=#{id}
+	</select>
+
+    <select id="getEventsFromQuarterId" parameterType="long" resultMap="MatchEventMap">
+        <include refid="getEvent"/>
+        where e.quarter_id=#{id}
+    </select>
+
+
+	<!-- public int insert(MatchEvent); -->
+	<insert id="insert" parameterType="MatchEvent">
+		<selectKey keyProperty="id" resultType="long" order="BEFORE">
+			select sq_events.nextval from dual
+		</selectKey>
+		insert into basketball_events
+			(id,created_on,modified_on,match_id,score_summary,event_time,event_timestamp
+			,event_type,home_team_action,away_team_action,points_made,neutral_action
+			,quarter_id,quarter_name<if test="firstPlayer!=null">,first_player_id</if><if test="secondPlayer!=null">,second_player_id</if><if test="firstPlayer!=null">,first_player_team_id</if><if test="secondPlayer!=null">,second_player_team_id</if>)
+			values(
+			#{id},current_timestamp,current_timestamp,#{quarter.match.matchId,jdbcType=VARCHAR},#{scoreSummary,jdbcType=VARCHAR },#{eventTime,jdbcType=FLOAT},#{eventTimestamp},
+			#{eventType,jdbcType=VARCHAR},#{homeTeamAction,jdbcType=VARCHAR},#{awayTeamAction,jdbcType=VARCHAR},#{pointsMade,jdbcType=INTEGER},#{neutralAction,jdbcType=VARCHAR}
+			,#{quarter.id,jdbcType=INTEGER},#{quarter.name}<if test="firstPlayer!=null">,#{firstPlayer.playerId,jdbcType=VARCHAR}</if><if test="secondPlayer!=null">,#{secondPlayer.playerId,jdbcType=VARCHAR}</if><if test="firstPlayer!=null">,#{firstPlayer.team.teamId}</if><if test="secondPlayer!=null">,#{secondPlayer.team.teamId}</if>)
+	</insert>
+    
+    <select id="findEvents" resultMap="MatchEventMap">
+        <include refid="getEvent"/>
+        where
+            e.event_timestamp &gt;= #{fromDate}
+            and e.event_timestamp &lt; #{toDate}
+            and e.sent = #{sent}
+        order by
+            e.event_timestamp       
+    </select>
+
+
+	<!-- public int update(MatchEvent event) -->
+	<update id="update" parameterType="MatchEvent">
+		update basketball_events
+			set <if test="{matchId}!=null">match_id=#{matchId,jdbcType=VARCHAR}</if>,
+				score_summary=#{scoreSummary},
+				event_time=#{eventTime},
+				event_timeStamp=#{eventTimestamp},
+				points_made=#{pointsMade},
+				first_player_id=#{firstPlayerId},
+				second_player_id=#{secondPlayerId},
+				modified_on=current_timestamp
+		    where id=#{id}
+	</update>
+	
+	<!-- public int deleteById(@Param("id") Long id); -->
+	<delete id="deleteById" parameterType="long">
+		delete from basketball_events where id = #{id}
+	</delete>
+	
+	<update id="updateSent" parameterType="MatchEvent">
+       update basketball_events
+       set
+           sent = 1,
+           modified_on = current_timestamp
+       where
+           id = #{id}
+           and sent = 0
+    </update>
+    
+    <select id="countSent" parameterType="int" resultType="long">
+       select count(*) from basketball_events where sent = #{sent}
+    </select>
+</mapper>

@@ -1,7 +1,7 @@
 databaseChangeLog:
    - changeSet:
       id: seasons
-      author: aleksa.milenkovic@mozzartbet.com
+      author: aleksa.milenkovic
       
       changes:
            - sql:
@@ -121,7 +121,7 @@ databaseChangeLog:
                    alter table basketball_quarters add constraint fk_quarter foreign key(match_id) references basketball_matches(match_id) ON DELETE CASCADE;
              
                    create table basketball_events(
-                          id number(7),
+                          id number(16),
                           created_on timestamp,
                           modified_on timestamp,
                           quarter_id number(7),
@@ -129,6 +129,7 @@ databaseChangeLog:
                           match_id varchar(20),
                           score_summary varchar2(80),
                           event_time number(7,2),
+                          event_timestamp timestamp,
                           event_type varchar2(20),
                           home_team_action varchar2(120),
                           away_team_action varchar2(120),
@@ -138,6 +139,7 @@ databaseChangeLog:
                           second_player_id varchar2(40) null,
                           first_player_team_id varchar2(40) null,
                           second_player_team_id varchar2(40) null,
+                          sent number(1) default 0,
                           primary key(id)
                       );
                       create sequence sq_events;
@@ -199,3 +201,6 @@ databaseChangeLog:
                    );
                    create sequence sq_linescore;
                    alter table basketball_linescore add constraint fk_matchstats foreign key(match_id) references basketball_matches(match_id) ON DELETE CASCADE;
+   
+                
+ 
